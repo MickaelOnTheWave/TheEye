@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "GlRenderer.h"
+#include "objects/GlRenderCube.h"
 
 GlCamera camera;
 double windowXCenter;
@@ -57,13 +58,16 @@ int main()
         gladLoadGL(glfwGetProcAddress);
 
         GlRenderer renderer(camera);
+        renderer.SetClearColor(0.0f, 0.0f, 0.0f);
+
+        renderer.AddRenderObject(new GlRenderCube());
+
+        renderer.PrepareRendering();
 
         while (!glfwWindowShouldClose(window))
         {
                 glfwPollEvents();
-
-                renderer.render();
-
+                renderer.Render();
                 glfwSwapBuffers(window);
         }
 

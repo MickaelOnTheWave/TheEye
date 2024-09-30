@@ -6,17 +6,37 @@ GlRenderer::GlRenderer(GlCamera& _camera)
    glViewport(0, 0, 1024, 768);
    glGenBuffers(1, &vbo);
    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-   initializeRendering();
 }
 
 GlRenderer::~GlRenderer()
 {
+   for (const auto renderObj : renderObjects)
+   {
+      delete renderObj;
+   }
+   renderObjects.clear();
 }
 
-void GlRenderer::render()
+void GlRenderer::SetClearColor(const float r, const float g, const float b)
 {
-   glClearColor(0.0f, 0.0f, 0.3f, 1.0f);
+   clearColorR = r;
+   clearColorG = g;
+   clearColorB = b;
+}
+
+void GlRenderer::AddRenderObject(GlRenderObject *renderObject)
+{
+   renderObjects.push_back(renderObject);
+}
+
+void GlRenderer::PrepareRendering()
+{
+   shaderProgram.use();
+}
+
+void GlRenderer::Render()
+{
+   glClearColor(clearColorR, clearColorG, clearColorB, 1.0f);
    glClear(GL_COLOR_BUFFER_BIT);
 
    glPushMatrix();
@@ -24,39 +44,14 @@ void GlRenderer::render()
       glMultMatrixf(camera.getTransformMatrix().getData());
 
       shaderProgram.use();
-      glBindVertexArray(vao);
-      glColor3f(0.7f, 0.2f, 0.0f);
-      glDrawArrays(GL_TRIANGLES, 0, 3);
+
+      for (const auto renderObj : renderObjects)
+      {
+         glColor3f(0.0f, 0.8f, 0.1f);
+         glPushMatrix();
+            renderObj->Render();
+         glPopMatrix();
+      }
 
    glPopMatrix();
-}
-
-void GlRenderer::initializeRendering()
-{
-   shaderProgram.use();
-
-   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-   glEnableVertexAttribArray(0);
-
-   float vertices[] = {
-       -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f,
-
-      0.0f,  0.5f, 0.0f,
-      0.5f, -0.5f, 0.0f,
-      0.0f, -0.5f, -0.5f,
-
-      0.0f,  0.5f, 0.0f,
-      0.0f, -0.5f, -0.5f,
-      -0.5f, -0.5f, 0.0f
-
-   };
-
-   glGenVertexArrays(1, &vao);
-   glBindVertexArray(vao);
-   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-   glEnableVertexAttribArray(0);
 }

@@ -1,7 +1,5 @@
 #include "GlCamera.h"
 
-#include <cmath>
-
 GlCamera::GlCamera()
    : AbstractGlCamera()
 {
@@ -16,13 +14,13 @@ void GlCamera::moveTo(double x, double y)
 
 void GlCamera::rotateAroundX(const double angle)
 {
-   const float scaleFactor = 0.01f;
+   const float scaleFactor = 0.002f;
    const float scaledAngle = angle * scaleFactor;
    transformMatrix = transformMatrix * Matrix4x4::RotationX(scaledAngle);
 }
 
 void GlCamera::rotateAroundY(const double angle)
 {
-   const float scaleFactor = 0.01f;
+   const float scaleFactor = 0.002f;
    transformMatrix = transformMatrix * Matrix4x4::RotationY(angle * scaleFactor);
 }
