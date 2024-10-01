@@ -37,11 +37,13 @@ void ShaderProgram::prepareShader(unsigned int& shader, char** shaderData,
    std::stringstream buffer;
    buffer << fileStream.rdbuf();
    std::string strBuffer = buffer.str();
-   *shaderData = reinterpret_cast<char*>(malloc(strBuffer.length() * sizeof(char)));
+   size_t shaderBufferSize = strBuffer.length() * sizeof(char);
+
+   *shaderData = reinterpret_cast<char*>(malloc(shaderBufferSize));
    strncpy(*shaderData, strBuffer.c_str(), strBuffer.length());
 
-   shader = glCreateShader(GL_VERTEX_SHADER);
-   glShaderSource(shader, 1, shaderData, NULL);
+   shader = glCreateShader(shaderType);
+   glShaderSource(shader, 1, shaderData, reinterpret_cast<GLint*>(&shaderBufferSize));
    glCompileShader(shader);
 
    int  success;
