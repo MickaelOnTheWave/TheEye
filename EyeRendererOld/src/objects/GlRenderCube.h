@@ -14,6 +14,7 @@ private:
    unsigned int vertexArrayObject;
    unsigned int vertexBufferObject;
    unsigned int elementBufferObject;
+   unsigned int textureObject;
 };
 
 #endif // GLRENDERCUBE_H

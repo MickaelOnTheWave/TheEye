@@ -119,3 +119,5 @@ target_link_libraries(${PROJECT_NAME} ${PROJ_LINK_LIBS})
 
 configure_file(${CMAKE_SOURCE_DIR}/src/shaders/basic.vert ${CMAKE_CURRENT_BINARY_DIR}/data/basic.vert COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/src/shaders/basic.frag ${CMAKE_CURRENT_BINARY_DIR}/data/basic.frag COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/data/texture-wood.jpeg ${CMAKE_CURRENT_BINARY_DIR}/data/texture-wood.jpeg COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/data/wall.jpg          ${CMAKE_CURRENT_BINARY_DIR}/data/wall.jpg COPYONLY)

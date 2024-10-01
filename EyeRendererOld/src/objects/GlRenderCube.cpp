@@ -2,6 +2,9 @@
 
 #include <glad/gl.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 GlRenderCube::GlRenderCube()
 {
    glGenBuffers(1, &vertexBufferObject);
@@ -12,15 +15,15 @@ GlRenderCube::GlRenderCube()
 
    const GLfloat value = 0.5f;
    const GLfloat vertices[] = {
-       -value, -value,  value, 1.f,0.f,0.f,
-        value, -value,  value, 0.f,1.f,0.f,
-        value,  value,  value, 0.f,0.f,1.f,
-       -value,  value,  value, 1.f,1.f,1.f,
+       -value, -value,  value,   1.f,0.f,0.f,   0.f,0.f,
+        value, -value,  value,   0.f,1.f,0.f,   1.f,0.f,
+        value,  value,  value,   0.f,0.f,1.f,   1.f,1.f,
+       -value,  value,  value,   1.f,1.f,1.f,   1.f,0.f,
 
-       -value, -value, -value, 0.f,0.f,0.f,
-        value, -value, -value, 1.f,1.f,0.f,
-        value,  value, -value, 0.f,1.f,1.f,
-       -value,  value, -value, 1.f,0.f,1.f,
+       -value, -value, -value,   0.f,0.f,0.f,   1.f,0.f,
+        value, -value, -value,   1.f,1.f,0.f,   0.f,0.f,
+        value,  value, -value,   0.f,1.f,1.f,   0.f,1.f,
+       -value,  value, -value,   1.f,0.f,1.f,   1.f,1.f
    };
 
    const GLuint indices[] = {
@@ -41,13 +44,40 @@ GlRenderCube::GlRenderCube()
    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+   int width, height, nrChannels;
+   unsigned char *textureData = stbi_load("data/texture-wood.jpeg", &width, &height, &nrChannels, 0);
+   if (textureData)
+   {
+      glGenTextures(1, &textureObject);
+      glBindTexture(GL_TEXTURE_2D, textureObject);
+
+      // Textures
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
+      glGenerateMipmap(GL_TEXTURE_2D);
+
+      stbi_image_free(textureData);
+   }
+
+   const GLsizei stride = 8 * sizeof(float);
+
    // Position
-   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
    glEnableVertexAttribArray(0);
 
    // Color
-   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
    glEnableVertexAttribArray(1);
+
+   // Texture coordinates
+   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
+   glEnableVertexAttribArray(2);
+
+
 }
 
 void GlRenderCube::Render()
@@ -57,5 +87,6 @@ void GlRenderCube::Render()
    const unsigned int indexCount = vertexPerFace * facesInCube;
 
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
+   glBindTexture(GL_TEXTURE_2D, textureObject);
    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }

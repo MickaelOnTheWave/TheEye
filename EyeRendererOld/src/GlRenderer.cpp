@@ -47,7 +47,6 @@ void GlRenderer::Render()
 
       for (const auto renderObj : renderObjects)
       {
-         glColor3f(0.0f, 0.8f, 0.1f);
          glPushMatrix();
             renderObj->Render();
          glPopMatrix();
