@@ -30,6 +30,8 @@ void GlRenderer::AddRenderObject(GlRenderObject *renderObject)
 void GlRenderer::PrepareRendering()
 {
    shaderProgram.use();
+   glUniform1i(glGetUniformLocation(shaderProgram.GetId(), "texture1"), 0);
+   glUniform1i(glGetUniformLocation(shaderProgram.GetId(), "texture2"), 1);
 }
 
 void GlRenderer::Render()
@@ -41,7 +43,7 @@ void GlRenderer::Render()
 
       glMultMatrixf(camera.getTransformMatrix().getData());
 
-      shaderProgram.use();
+      //shaderProgram.use();
 
       for (const auto renderObj : renderObjects)
       {

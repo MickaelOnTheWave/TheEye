@@ -22,6 +22,11 @@ ShaderProgram::~ShaderProgram()
    fragmentShaderDataPtr = nullptr;
 }
 
+unsigned int ShaderProgram::GetId() const
+{
+   return shaderProgram;
+}
+
 void ShaderProgram::use()
 {
    glUseProgram(shaderProgram);

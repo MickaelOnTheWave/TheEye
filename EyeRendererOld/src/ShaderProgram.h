@@ -10,6 +10,7 @@ public:
    ShaderProgram(const std::string& vertexFile, const std::string& fragmentFile);
    virtual ~ShaderProgram();
 
+   unsigned int GetId() const;
    void use();
 
 private:

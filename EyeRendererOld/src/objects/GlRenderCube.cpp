@@ -23,8 +23,15 @@ void GlRenderCube::Render()
    const unsigned int facesInCube = 6;
    const unsigned int indexCount = vertexPerFace * facesInCube;
 
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
-   glBindTexture(GL_TEXTURE_2D, textureObject);
+   glActiveTexture(GL_TEXTURE0);
+   glBindTexture(GL_TEXTURE_2D, textureObjects[0]);
+   glActiveTexture(GL_TEXTURE1);
+   glBindTexture(GL_TEXTURE_2D, textureObjects[1]);
+
+   //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
+   glBindVertexArray(vertexArrayObject);
+
+   //glBindTexture(GL_TEXTURE_2D, textureObjects[0]);
    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }
 
@@ -66,24 +73,9 @@ void GlRenderCube::setupElementBufferObject()
 
 void GlRenderCube::setupTextureObject()
 {
-   int width, height, nrChannels;
-   unsigned char *textureData = stbi_load("data/texture-wood.jpeg", &width, &height, &nrChannels, 0);
-   if (textureData)
-   {
-      glGenTextures(1, &textureObject);
-      glBindTexture(GL_TEXTURE_2D, textureObject);
-
-      // Textures
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
-      glGenerateMipmap(GL_TEXTURE_2D);
-
-      stbi_image_free(textureData);
-   }
+   glGenTextures(2, textureObjects);
+   generateTextureObject("data/texture-wood.jpeg", 0, GL_RGB);
+   generateTextureObject("data/awesomeface.png", 1, GL_RGBA);
 }
 
 void GlRenderCube::setupVertexArrayAttributes()
@@ -101,4 +93,27 @@ void GlRenderCube::setupVertexArrayAttributes()
    // Texture coordinates
    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
    glEnableVertexAttribArray(2);
+}
+
+void GlRenderCube::generateTextureObject(const char *imagePath, const unsigned int textureIndex,
+                                         const unsigned int dataFormat)
+{
+   int width, height, nrChannels;
+   unsigned char *textureData = stbi_load(imagePath, &width, &height, &nrChannels, 0);
+   if (textureData)
+   {
+      glActiveTexture(GL_TEXTURE0 + textureIndex);
+      glBindTexture(GL_TEXTURE_2D, textureObjects[textureIndex]);
+
+      // Textures
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, textureData);
+      glGenerateMipmap(GL_TEXTURE_2D);
+
+      stbi_image_free(textureData);
+   }
 }

@@ -121,3 +121,4 @@ configure_file(${CMAKE_SOURCE_DIR}/src/shaders/basic.vert ${CMAKE_CURRENT_BINARY
 configure_file(${CMAKE_SOURCE_DIR}/src/shaders/basic.frag ${CMAKE_CURRENT_BINARY_DIR}/data/basic.frag COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/data/texture-wood.jpeg ${CMAKE_CURRENT_BINARY_DIR}/data/texture-wood.jpeg COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/data/wall.jpg          ${CMAKE_CURRENT_BINARY_DIR}/data/wall.jpg COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/data/awesomeface.png   ${CMAKE_CURRENT_BINARY_DIR}/data/awesomeface.png COPYONLY)
