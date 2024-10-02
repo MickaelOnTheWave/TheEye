@@ -40,13 +40,11 @@ void GlRenderer::Render()
    glClear(GL_COLOR_BUFFER_BIT);
 
    glPushMatrix();
-
-      glMultMatrixf(camera.getTransformMatrix().getData());
-
-      //shaderProgram.use();
-
       for (const auto renderObj : renderObjects)
       {
+         unsigned int transformLoc = glGetUniformLocation(shaderProgram.GetId(), "cameraTransform");
+         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, camera.getTransformMatrix().getData());
+
          glPushMatrix();
             renderObj->Render();
          glPopMatrix();
