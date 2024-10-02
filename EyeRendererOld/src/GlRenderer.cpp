@@ -4,8 +4,6 @@ GlRenderer::GlRenderer(GlCamera& _camera)
    : camera(_camera), shaderProgram("data/basic.vert", "data/basic.frag")
 {
    glViewport(0, 0, 1024, 768);
-   glGenBuffers(1, &vbo);
-   glBindBuffer(GL_ARRAY_BUFFER, vbo);
 }
 
 GlRenderer::~GlRenderer()

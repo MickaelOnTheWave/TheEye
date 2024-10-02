@@ -11,6 +11,11 @@ public:
    void Render() override;
 
 private:
+   void setupVertexBufferObject();
+   void setupElementBufferObject();
+   void setupTextureObject();
+   void setupVertexArrayAttributes();
+
    unsigned int vertexArrayObject;
    unsigned int vertexBufferObject;
    unsigned int elementBufferObject;

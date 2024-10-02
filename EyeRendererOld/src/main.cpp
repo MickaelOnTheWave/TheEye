@@ -30,7 +30,7 @@ static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
    previousXpos = xpos;
    previousYpos = ypos;
 
-   std::cout << deltaX << std::endl;
+   //std::cout << deltaX << std::endl;
 }
 
 int main()
@@ -47,8 +47,8 @@ int main()
         window = glfwCreateWindow(windowSizeX, windowSizeY, "Eye Renderer", nullptr, nullptr);
         if (!window)
         {
-                glfwTerminate();
-                return -1;
+         glfwTerminate();
+         return -1;
         }
 
         glfwSetKeyCallback(window, key_callback);

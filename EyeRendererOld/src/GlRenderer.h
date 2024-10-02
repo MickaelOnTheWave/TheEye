@@ -26,9 +26,6 @@ private:
    ShaderProgram shaderProgram;
 
    float clearColorR, clearColorG, clearColorB;
-
-   unsigned int vbo;
-   unsigned int vao;
 };
 
 #endif // GLRENDERER_H
