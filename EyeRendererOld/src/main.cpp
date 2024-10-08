@@ -4,10 +4,10 @@
 #include <GLFW/glfw3.h>
 
 #include "GlRenderer.h"
-#include "cameras/GlCamera.h"
+#include "cameras/OrbitCamera.h"
 #include "objects/GlRenderCube.h"
 
-GlCamera camera;
+OrbitCamera camera(0, 0, 0);
 double windowXCenter;
 double windowYCenter;
 
@@ -25,8 +25,8 @@ static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
    const double deltaX = xpos - previousXpos;
    const double deltaY = ypos - previousYpos;
 
-   camera.rotateAroundX(deltaY);
-   camera.rotateAroundY(deltaX);
+   camera.RotateInX(deltaY);
+   camera.RotateInY(deltaX);
 
    previousXpos = xpos;
    previousYpos = ypos;

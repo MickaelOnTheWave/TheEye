@@ -11,10 +11,13 @@ public:
                const float _targetZ);
 
    void RotateInX(const double angle);
-   void rotateInY(const double angle);
+   void RotateInY(const double angle);
 
 private:
    float targetX, targetY, targetZ;
+   float rotationSpeed;
+   float currentAngleX = 0.f;
+   float currentAngleY = 0.f;
 };
 
 #endif // ORBITCAMERA_H
