@@ -29,6 +29,7 @@ void GlRenderer::AddRenderObject(GlRenderObject *renderObject)
 
 void GlRenderer::PrepareRendering()
 {
+   glEnable(GL_DEPTH_TEST);
    shaderProgram.use();
    glUniform1i(glGetUniformLocation(shaderProgram.GetId(), "texture1"), 0);
    glUniform1i(glGetUniformLocation(shaderProgram.GetId(), "texture2"), 1);
@@ -37,7 +38,7 @@ void GlRenderer::PrepareRendering()
 void GlRenderer::Render()
 {
    glClearColor(clearColorR, clearColorG, clearColorB, 1.0f);
-   glClear(GL_COLOR_BUFFER_BIT);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    glPushMatrix();
       for (const auto renderObj : renderObjects)
