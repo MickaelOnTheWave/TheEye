@@ -38,6 +38,7 @@ set(PROJ_SRC)
 # Add all files/folders under src folder automatically to the project
 file(GLOB_RECURSE PROJ_SRC src/*.h src/*.cpp)
 file(GLOB_RECURSE PROJ_SRC_OBJS src/objects/*.h src/objects/*.cpp)
+file(GLOB_RECURSE PROJ_SRC_CAMS src/cameras/*.h src/cameras/*.cpp)
 file(GLOB_RECURSE PROJ_SHADERS src/shaders/*)
 
 

@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "GlRenderer.h"
+#include "cameras/GlCamera.h"
 #include "objects/GlRenderCube.h"
 
 GlCamera camera;

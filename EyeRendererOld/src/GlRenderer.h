@@ -3,7 +3,7 @@
 
 #include <unordered_map>
 #include <vector>
-#include "GlCamera.h"
+#include "cameras/AbstractGlCamera.h"
 #include "ShaderProgram.h"
 #include "objects/GlRenderedInstance.h"
 #include "objects/GlRenderObject.h"
@@ -11,7 +11,7 @@
 class GlRenderer
 {
 public:
-   GlRenderer(GlCamera& _camera);
+   GlRenderer(AbstractGlCamera& _camera);
    virtual ~GlRenderer();
 
    void SetClearColor(const float r, const float g, const float b);
@@ -23,7 +23,7 @@ public:
    void Render();
 
 private:
-   GlCamera& camera;
+   AbstractGlCamera& camera;
    std::unordered_map<GlRenderObject*, std::vector<GlRenderedInstance*>> renderObjects;
    ShaderProgram shaderProgram;
 
