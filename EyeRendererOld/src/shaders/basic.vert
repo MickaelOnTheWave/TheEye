@@ -7,10 +7,11 @@ out vec3 color;
 out vec2 texCoord;
 
 uniform mat4 cameraTransform;
+uniform mat4 objectTransform;
 
 void main()
 {
-    gl_Position = cameraTransform * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    gl_Position = cameraTransform * objectTransform * vec4(aPos.x, aPos.y, aPos.z, 1.0);
     color = aCol;
     texCoord = aTex;
 }

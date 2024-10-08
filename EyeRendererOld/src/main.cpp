@@ -33,6 +33,26 @@ static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
    //std::cout << deltaX << std::endl;
 }
 
+void populateScene(GlRenderer& renderer)
+{
+   auto startCube = new GlRenderCube();
+
+   auto transform1 = Matrix4x4::Scale(0.4);
+   transform1 *= Matrix4x4::Translation(0.5, 0.0, 0.0);
+   auto cube1 = new GlRenderedInstance(startCube, transform1);
+   renderer.AddRenderObject(cube1);
+
+   auto transform2 = Matrix4x4::Scale(0.4);
+   transform2 *= Matrix4x4::Translation(-0.5, 0.0, 0.0);
+   auto cube2 = new GlRenderedInstance(startCube, transform2);
+   renderer.AddRenderObject(cube2);
+
+   auto transform3 = Matrix4x4::Scale(0.4);
+   transform3 *= Matrix4x4::Translation(0.0, 0.5, 0.0);
+   auto cube3 = new GlRenderedInstance(startCube, transform3);
+   renderer.AddRenderObject(cube3);
+}
+
 int main()
 {
         GLFWwindow* window;
@@ -60,7 +80,7 @@ int main()
         GlRenderer renderer(camera);
         renderer.SetClearColor(0.0f, 0.0f, 0.0f);
 
-        renderer.AddRenderObject(new GlRenderCube());
+        populateScene(renderer);
 
         renderer.PrepareRendering();
 

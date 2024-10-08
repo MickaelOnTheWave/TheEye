@@ -8,9 +8,14 @@ GlRenderer::GlRenderer(GlCamera& _camera)
 
 GlRenderer::~GlRenderer()
 {
-   for (const auto renderObj : renderObjects)
+   for (auto& renderObj : renderObjects)
    {
-      delete renderObj;
+      for (const auto renderedObj : renderObj.second)
+      {
+         delete renderedObj;
+      }
+      renderObj.second.clear();
+      delete renderObj.first;
    }
    renderObjects.clear();
 }
@@ -22,9 +27,9 @@ void GlRenderer::SetClearColor(const float r, const float g, const float b)
    clearColorB = b;
 }
 
-void GlRenderer::AddRenderObject(GlRenderObject *renderObject)
+void GlRenderer::AddRenderObject(GlRenderedInstance *object)
 {
-   renderObjects.push_back(renderObject);
+   renderObjects[object->GetRenderObject()].push_back(object);
 }
 
 void GlRenderer::PrepareRendering()
@@ -41,14 +46,17 @@ void GlRenderer::Render()
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    glPushMatrix();
-      for (const auto renderObj : renderObjects)
+      for (const auto& renderObj : renderObjects)
       {
          unsigned int transformLoc = glGetUniformLocation(shaderProgram.GetId(), "cameraTransform");
          glUniformMatrix4fv(transformLoc, 1, GL_FALSE, camera.getTransformMatrix().getData());
 
-         glPushMatrix();
-            renderObj->Render();
-         glPopMatrix();
+         for (const auto renderedObj : renderObj.second)
+         {
+            unsigned int objTransformLoc = glGetUniformLocation(shaderProgram.GetId(), "objectTransform");
+            glUniformMatrix4fv(objTransformLoc, 1, GL_FALSE, renderedObj->GetTransform().getData());
+            renderObj.first->Render();
+         }
       }
 
    glPopMatrix();

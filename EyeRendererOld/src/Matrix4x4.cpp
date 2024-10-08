@@ -36,6 +36,22 @@ Matrix4x4 Matrix4x4::Translation(const float x, const float y,
    return Matrix4x4(newData);
 }
 
+Matrix4x4 Matrix4x4::Scale(const float x, const float y, const float z)
+{
+   const float newData[16] = {
+       x,   0.f, 0.f, 0.f,
+       0.f,   y, 0.f, 0.f,
+       0.f, 0.f,   z, 0.f,
+       0.f, 0.f, 0.f, 1.f
+   };
+   return Matrix4x4(newData);
+}
+
+Matrix4x4 Matrix4x4::Scale(const float s)
+{
+   return Scale(s, s, s);
+}
+
 Matrix4x4 Matrix4x4::RotationX(const float angle)
 {
    const float cosAngle = cos(angle);
@@ -80,6 +96,12 @@ Matrix4x4 Matrix4x4::operator*(const Matrix4x4& other)
       }
    }
    return result;
+}
+
+Matrix4x4& Matrix4x4::operator*=(const Matrix4x4 &other)
+{
+   *this = *this * other;
+   return *this;
 }
 
 float* Matrix4x4::getData()

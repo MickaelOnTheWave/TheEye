@@ -1,9 +1,11 @@
 #ifndef GLRENDERER_H
 #define GLRENDERER_H
 
+#include <unordered_map>
 #include <vector>
 #include "GlCamera.h"
 #include "ShaderProgram.h"
+#include "objects/GlRenderedInstance.h"
 #include "objects/GlRenderObject.h"
 
 class GlRenderer
@@ -14,7 +16,7 @@ public:
 
    void SetClearColor(const float r, const float g, const float b);
 
-   void AddRenderObject(GlRenderObject* renderObject);
+   void AddRenderObject(GlRenderedInstance* object);
 
    void PrepareRendering();
 
@@ -22,7 +24,7 @@ public:
 
 private:
    GlCamera& camera;
-   std::vector<GlRenderObject*> renderObjects;
+   std::unordered_map<GlRenderObject*, std::vector<GlRenderedInstance*>> renderObjects;
    ShaderProgram shaderProgram;
 
    float clearColorR, clearColorG, clearColorB;
