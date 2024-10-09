@@ -3,10 +3,14 @@
 
 #include "GlRenderObject.h"
 
+#include <string>
+#include <vector>
+
 class GlRenderCube : public GlRenderObject
 {
 public:
-   GlRenderCube();
+   using TextureVec = std::vector<std::pair<std::string, int>>;
+   GlRenderCube(const TextureVec& _textureFiles);
 
    void PrepareRendering() override;
 
@@ -15,7 +19,7 @@ public:
 private:
    void setupVertexBufferObject();
    void setupElementBufferObject();
-   void setupTextureObject();
+   void setupTextureObject(const TextureVec& _textureFiles);
    void setupVertexArrayAttributes();
 
    void generateTextureObject(const char* imagePath, const unsigned int textureIndex,
@@ -25,6 +29,7 @@ private:
    unsigned int vertexBufferObject;
    unsigned int elementBufferObject;
    unsigned int textureObjects[2];
+   TextureVec textureFiles;
 };
 
 #endif // GLRENDERCUBE_H

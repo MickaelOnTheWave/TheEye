@@ -5,14 +5,14 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-GlRenderCube::GlRenderCube()
+GlRenderCube::GlRenderCube(const TextureVec &_textureFiles)
 {
    glGenVertexArrays(1, &vertexArrayObject);
    glBindVertexArray(vertexArrayObject);
 
    setupVertexBufferObject();
    setupElementBufferObject();
-   setupTextureObject();
+   setupTextureObject(_textureFiles);
 
    setupVertexArrayAttributes();
 }
@@ -35,6 +35,12 @@ void GlRenderCube::Render()
    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }
 
+/*void GlRenderCube::SetTextures(const TextureVec& _textureFiles)
+{
+   generateTextureObject("data/texture-wood.jpeg", 0, GL_RGB);
+   generateTextureObject("data/awesomeface.png", 1, GL_RGBA);
+}
+*/
 void GlRenderCube::setupVertexBufferObject()
 {
    const GLfloat value = 0.5f;
@@ -71,11 +77,16 @@ void GlRenderCube::setupElementBufferObject()
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
-void GlRenderCube::setupTextureObject()
+void GlRenderCube::setupTextureObject(const TextureVec& _textureFiles)
 {
-   glGenTextures(2, textureObjects);
-   generateTextureObject("data/texture-wood.jpeg", 0, GL_RGB);
-   generateTextureObject("data/awesomeface.png", 1, GL_RGBA);
+   textureFiles = _textureFiles;
+
+   glGenTextures(textureFiles.size(), textureObjects);
+   for (int i=0; i<textureFiles.size(); ++i)
+   {
+      const auto& textureFile = textureFiles[i];
+      generateTextureObject(textureFile.first.c_str(), i, textureFile.second);
+   }
 }
 
 void GlRenderCube::setupVertexArrayAttributes()

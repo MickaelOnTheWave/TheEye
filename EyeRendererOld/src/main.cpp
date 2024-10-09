@@ -36,7 +36,15 @@ static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 
 void populateScene(GlRenderer& renderer)
 {
-   auto startCube = new GlRenderCube();
+   const std::pair<std::string, int> faceTexture = {"data/awesomeface.png", GL_RGBA};
+   const GlRenderCube::TextureVec textures1 = {
+      {"data/texture-wood.jpeg", GL_RGB}, faceTexture
+   };
+   const GlRenderCube::TextureVec textures2 = {
+      {"data/wall.jpg", GL_RGB}, faceTexture
+   };
+   auto cube1 = new GlRenderCube(textures1);
+   auto cube2 = new GlRenderCube(textures2);
 
    const int dim = 8;
    const float dimScaling = 0.5;
@@ -47,12 +55,13 @@ void populateScene(GlRenderer& renderer)
       {
          for (int k=0; k<dim; ++k)
          {
+            GlRenderCube* cube = (k < 4) ? cube2 : cube1;
             auto transform1 = Matrix4x4::Scale(0.3);
             transform1 *= Matrix4x4::Translation(i * dimScaling,
                                                  j * dimScaling,
                                                  k * dimScaling);
-            auto cube1 = new GlRenderedInstance(startCube, transform1);
-            renderer.AddRenderObject(cube1);
+            auto cubeInstance = new GlRenderedInstance(cube, transform1);
+            renderer.AddRenderObject(cubeInstance);
          }
       }
    }
