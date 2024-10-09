@@ -5,6 +5,8 @@
 
 #include "Matrix4x4.h"
 
+// TODO Implement proper Orbit Camera
+// TODO Implement FPS Camera
 class AbstractGlCamera
 {
 public:
