@@ -17,21 +17,21 @@ GlRenderCube::GlRenderCube()
    setupVertexArrayAttributes();
 }
 
-void GlRenderCube::Render()
+void GlRenderCube::PrepareRendering()
 {
-   const unsigned int vertexPerFace = 6;
-   const unsigned int facesInCube = 6;
-   const unsigned int indexCount = vertexPerFace * facesInCube;
-
    glActiveTexture(GL_TEXTURE0);
    glBindTexture(GL_TEXTURE_2D, textureObjects[0]);
    glActiveTexture(GL_TEXTURE1);
    glBindTexture(GL_TEXTURE_2D, textureObjects[1]);
 
-   //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
    glBindVertexArray(vertexArrayObject);
+}
 
-   //glBindTexture(GL_TEXTURE_2D, textureObjects[0]);
+void GlRenderCube::Render()
+{
+   const unsigned int vertexPerFace = 6;
+   const unsigned int facesInCube = 6;
+   const unsigned int indexCount = vertexPerFace * facesInCube;
    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }
 

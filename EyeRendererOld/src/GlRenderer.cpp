@@ -51,6 +51,8 @@ void GlRenderer::Render()
          unsigned int transformLoc = glGetUniformLocation(shaderProgram.GetId(), "cameraTransform");
          glUniformMatrix4fv(transformLoc, 1, GL_FALSE, camera.getTransformMatrix().getData());
 
+         renderObj.first->PrepareRendering();
+
          for (const auto renderedObj : renderObj.second)
          {
             unsigned int objTransformLoc = glGetUniformLocation(shaderProgram.GetId(), "objectTransform");

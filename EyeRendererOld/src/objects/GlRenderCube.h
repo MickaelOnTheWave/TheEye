@@ -8,7 +8,8 @@ class GlRenderCube : public GlRenderObject
 public:
    GlRenderCube();
 
-   // TODO Implement a PrepareRendering() and a separate Render() and use them in the renderer.
+   void PrepareRendering() override;
+
    void Render() override;
 
 private:

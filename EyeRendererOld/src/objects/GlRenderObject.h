@@ -7,6 +7,8 @@ public:
    GlRenderObject();
    virtual ~GlRenderObject() = default;
 
+   virtual void PrepareRendering() = 0;
+
    virtual void Render() = 0;
 };
 
