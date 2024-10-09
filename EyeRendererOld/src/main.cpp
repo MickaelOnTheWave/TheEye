@@ -7,7 +7,7 @@
 #include "cameras/OrbitCamera.h"
 #include "objects/GlRenderCube.h"
 
-OrbitCamera camera(0, 0, 0);
+OrbitCamera camera(2, 0, 2);
 double windowXCenter;
 double windowYCenter;
 
@@ -38,20 +38,24 @@ void populateScene(GlRenderer& renderer)
 {
    auto startCube = new GlRenderCube();
 
-   auto transform1 = Matrix4x4::Scale(0.4);
-   transform1 *= Matrix4x4::Translation(0.5, 0.0, 0.0);
-   auto cube1 = new GlRenderedInstance(startCube, transform1);
-   renderer.AddRenderObject(cube1);
+   const int dim = 8;
+   const float dimScaling = 0.5;
 
-   auto transform2 = Matrix4x4::Scale(0.4);
-   transform2 *= Matrix4x4::Translation(-0.5, 0.0, 0.0);
-   auto cube2 = new GlRenderedInstance(startCube, transform2);
-   renderer.AddRenderObject(cube2);
-
-   auto transform3 = Matrix4x4::Scale(0.4);
-   transform3 *= Matrix4x4::Translation(0.0, 0.5, 0.0);
-   auto cube3 = new GlRenderedInstance(startCube, transform3);
-   renderer.AddRenderObject(cube3);
+   for (int i=0; i<dim; ++i)
+   {
+      for (int j=0; j<dim; ++j)
+      {
+         for (int k=0; k<dim; ++k)
+         {
+            auto transform1 = Matrix4x4::Scale(0.3);
+            transform1 *= Matrix4x4::Translation(i * dimScaling,
+                                                 j * dimScaling,
+                                                 k * dimScaling);
+            auto cube1 = new GlRenderedInstance(startCube, transform1);
+            renderer.AddRenderObject(cube1);
+         }
+      }
+   }
 }
 
 int main()
