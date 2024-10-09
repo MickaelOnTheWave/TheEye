@@ -14,6 +14,8 @@ public:
    void RotateInY(const double angle);
 
 private:
+   void updateTransformMatrix(void);
+
    float targetX, targetY, targetZ;
    float rotationSpeed;
    float currentAngleX = 0.f;

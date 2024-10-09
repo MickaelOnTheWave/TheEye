@@ -10,11 +10,17 @@ OrbitCamera::OrbitCamera(const float _targetX, const float _targetY, const float
 void OrbitCamera::RotateInX(const double angle)
 {
    currentAngleX += angle * rotationSpeed;
-   transformMatrix = Matrix4x4::RotationX(currentAngleX);
+   updateTransformMatrix();
 }
 
 void OrbitCamera::RotateInY(const double angle)
 {
    currentAngleY += angle * rotationSpeed;
-   transformMatrix = Matrix4x4::RotationY(currentAngleY);
+   updateTransformMatrix();
+}
+
+void OrbitCamera::updateTransformMatrix(void)
+{
+   transformMatrix = Matrix4x4::Translation(-targetX, -targetY, -targetZ) * Matrix4x4::RotationX(currentAngleX) *
+                     Matrix4x4::RotationY(currentAngleY);
 }
