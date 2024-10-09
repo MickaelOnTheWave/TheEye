@@ -17,12 +17,15 @@ GlRenderCube::GlRenderCube(const TextureVec &_textureFiles)
    setupVertexArrayAttributes();
 }
 
-void GlRenderCube::PrepareRendering()
+void GlRenderCube::PrepareRendering(const unsigned int shaderProgramId)
 {
-   glActiveTexture(GL_TEXTURE0);
-   glBindTexture(GL_TEXTURE_2D, textureObjects[0]);
-   glActiveTexture(GL_TEXTURE1);
-   glBindTexture(GL_TEXTURE_2D, textureObjects[1]);
+   glUniform1i(glGetUniformLocation(shaderProgramId, "textureCount"), textureFiles.size());
+
+   for (unsigned int i=0; i<textureFiles.size(); ++i)
+   {
+      glActiveTexture(GL_TEXTURE0 + i);
+      glBindTexture(GL_TEXTURE_2D, textureObjects[i]);
+   }
 
    glBindVertexArray(vertexArrayObject);
 }
@@ -35,12 +38,6 @@ void GlRenderCube::Render()
    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }
 
-/*void GlRenderCube::SetTextures(const TextureVec& _textureFiles)
-{
-   generateTextureObject("data/texture-wood.jpeg", 0, GL_RGB);
-   generateTextureObject("data/awesomeface.png", 1, GL_RGBA);
-}
-*/
 void GlRenderCube::setupVertexBufferObject()
 {
    const GLfloat value = 0.5f;

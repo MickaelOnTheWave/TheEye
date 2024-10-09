@@ -7,7 +7,7 @@ public:
    GlRenderObject();
    virtual ~GlRenderObject() = default;
 
-   virtual void PrepareRendering() = 0;
+   virtual void PrepareRendering(const unsigned int shaderProgramId) = 0;
 
    virtual void Render() = 0;
 };

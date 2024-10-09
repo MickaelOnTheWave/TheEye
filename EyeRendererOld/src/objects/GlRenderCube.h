@@ -12,7 +12,7 @@ public:
    using TextureVec = std::vector<std::pair<std::string, int>>;
    GlRenderCube(const TextureVec& _textureFiles);
 
-   void PrepareRendering() override;
+   void PrepareRendering(const unsigned int shaderProgramId) override;
 
    void Render() override;
 
