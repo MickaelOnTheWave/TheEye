@@ -10,6 +10,11 @@ public:
    virtual void PrepareRendering(const unsigned int shaderProgramId) = 0;
 
    virtual void Render() = 0;
+
+protected:
+   unsigned int vertexArrayObject;
+   unsigned int vertexBufferObject;
+   unsigned int elementBufferObject;
 };
 
 #endif // GLRENDEROBJECT_H

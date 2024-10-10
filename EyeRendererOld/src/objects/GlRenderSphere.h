@@ -3,6 +3,12 @@
 
 #include "GlRenderObject.h"
 
+#include <glad/gl.h>
+#include <vector>
+
+#include "math/Triangle.h"
+#include "math/Vector3.h"
+
 class GlRenderSphere : public GlRenderObject
 {
 public:
@@ -13,6 +19,16 @@ public:
    void Render() override;
 
 private:
+   void CreateSubdividedSphere(const unsigned int subdivisions);
+
+   void setupVertexBufferObject();
+   void setupElementBufferObject();
+   void setupVertexArrayAttributes();
+
+   std::vector<float> CreatePointVectorData() const;
+
+   std::vector<Triangle> triangles;
+   std::vector<Vector3> points;
 };
 
 #endif // GLRENDERSPHERE_H

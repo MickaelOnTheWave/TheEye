@@ -6,6 +6,7 @@
 #include "GlRenderer.h"
 #include "cameras/OrbitCamera.h"
 #include "objects/GlRenderCube.h"
+#include "objects/GlRenderSphere.h"
 
 OrbitCamera camera(2, 0, 2);
 double windowXCenter;
@@ -45,6 +46,7 @@ void populateScene(GlRenderer& renderer)
    auto cube1 = new GlRenderCube(textures1);
    auto cube2 = new GlRenderCube(textures2);
    auto cube3 = new GlRenderCube({wallTexture});
+   auto sphere = new GlRenderSphere(0);
 
    const int dim = 8;
    const float dimScaling = 0.5;
@@ -55,13 +57,28 @@ void populateScene(GlRenderer& renderer)
       {
          for (int k=0; k<dim; ++k)
          {
-            GlRenderCube* cube = (k < 4) ? (i < 4) ? cube3 : cube2 : cube1;
+            GlRenderObject* renderObj;
+            if (i < 4)
+            {
+               if (j < 4)
+               {
+                  if (k < 4)
+                     renderObj = sphere;
+                  else
+                     renderObj = cube3;
+               }
+               else
+                  renderObj = cube2;
+            }
+            else
+               renderObj = cube1;
+
             auto transform1 = Matrix4x4::Scale(0.3);
             transform1 *= Matrix4x4::Translation(i * dimScaling,
                                                  j * dimScaling,
                                                  k * dimScaling);
-            auto cubeInstance = new GlRenderedInstance(cube, transform1);
-            renderer.AddRenderObject(cubeInstance);
+            auto instance = new GlRenderedInstance(renderObj, transform1);
+            renderer.AddRenderObject(instance);
          }
       }
    }

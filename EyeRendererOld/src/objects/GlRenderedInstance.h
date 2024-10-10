@@ -2,7 +2,7 @@
 #define GLRENDEREDINSTANCE_H
 
 #include "GlRenderObject.h"
-#include "Matrix4x4.h"
+#include "math/Matrix4x4.h"
 
 class GlRenderedInstance
 {
