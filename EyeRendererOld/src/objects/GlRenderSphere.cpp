@@ -33,13 +33,20 @@ void GlRenderSphere::Render()
 void GlRenderSphere::CreateSubdividedSphere(const unsigned int subdivisions)
 {
    const GLfloat radius = 1.f;
-   const GLfloat value = radius * cos(M_PI_4);
+   const float angle = M_PI / 6.f;
+   const GLfloat cosAngle = cos(angle);
+   const GLfloat sinAngle = sin(angle);
 
    // Initial points
-   points.push_back(Vector3(0.f, radius, 0.f));
-   points.push_back(Vector3(0.f, -value, -value));
-   points.push_back(Vector3(value, -value, value));
-   points.push_back(Vector3(-value, -value, value));
+   points.emplace_back(0.f, radius, 0.f);
+   points.emplace_back(0.f, -sinAngle, -cosAngle);
+   points.emplace_back(cosAngle * sinAngle, -sinAngle, cosAngle * cosAngle);
+   points.emplace_back(-cosAngle * sinAngle, -sinAngle, cosAngle * cosAngle);
+
+   textureCoordinates.emplace_back(0.5f, 1.f);
+   textureCoordinates.emplace_back(0.f, 0.f);
+   textureCoordinates.emplace_back(1.f, 0.f);
+   textureCoordinates.emplace_back(0.f, 0.f);
 
    // Initial triangles
    triangles.emplace_back(0, 2, 3);
@@ -50,8 +57,8 @@ void GlRenderSphere::CreateSubdividedSphere(const unsigned int subdivisions)
    for (unsigned int currentDivision = 0; currentDivision < subdivisions; ++currentDivision)
    {
       const unsigned int triangleCount = triangles.size();
-      for (unsigned int i=0; i<triangleCount; ++i)
-         triangles[i].Subdivide(points, triangles, i);
+      for (unsigned int i=0; i<1; ++i)
+         triangles[i].Subdivide(points, textureCoordinates, triangles, i);
    }
 }
 
@@ -76,8 +83,12 @@ void GlRenderSphere::setupElementBufferObject()
 vector<float> GlRenderSphere::CreateVertexBufferData() const
 {
    vector<float> data;
-   for (const auto& point : points)
+
+   for (unsigned int i=0; i < points.size(); ++i)
    {
+      const auto& point = points[i];
+      const auto& texCoord = textureCoordinates[i];
+
       // Point data
       data.push_back(point.X());
       data.push_back(point.Y());
@@ -89,8 +100,8 @@ vector<float> GlRenderSphere::CreateVertexBufferData() const
       data.push_back(0.1f);
 
       // Texture coord data
-      data.push_back(1.f);
-      data.push_back(0.f);
+      data.push_back(texCoord.u);
+      data.push_back(texCoord.v);
    }
    return data;
 }

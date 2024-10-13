@@ -27,6 +27,8 @@ private:
 
    std::vector<Triangle> triangles;
    std::vector<Vector3> points;
+
+   std::vector<TexCoord> textureCoordinates;
 };
 
 #endif // GLRENDERSPHERE_H

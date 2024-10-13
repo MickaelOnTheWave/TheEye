@@ -5,17 +5,35 @@
 
 #include <vector>
 
+struct TexCoord
+{
+   TexCoord(float _u = 0.f, float _v = 0.f) : u(_u), v(_v)
+   {}
+
+   TexCoord Middle(const TexCoord& other)
+   {
+      TexCoord middle;
+      middle.u = (u + other.u) / 2.f;
+      middle.v = (v + other.v) / 2.f;
+      return middle;
+   }
+
+   float u,v;
+};
+
 class Triangle
 {
 public:
    Triangle(const unsigned int _indexP1, const unsigned int _indexP2,
             const unsigned int _indexP3);
 
+
    unsigned int GetP1() const;
    unsigned int GetP2() const;
    unsigned int GetP3() const;
 
    void Subdivide(std::vector<Vector3>& pointRepository,
+                  std::vector<TexCoord> &textureCoordinateRepository,
                   std::vector<Triangle>& triangleRepository,
                   const std::size_t currentTriangleIndex) const;
 

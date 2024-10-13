@@ -43,5 +43,5 @@ float Vector3::Z() const
 
 float Vector3::ComputeLength() const
 {
-   return sqrt(x*x + y+y + z*z);
+   return sqrt(x*x + y*y + z*z);
 }
