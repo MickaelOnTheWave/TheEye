@@ -39,6 +39,7 @@ set(PROJ_SRC)
 file(GLOB_RECURSE PROJ_SRC src/*.h src/*.cpp)
 file(GLOB_RECURSE PROJ_SRC_OBJS src/objects/*.h src/objects/*.cpp)
 file(GLOB_RECURSE PROJ_SRC_CAMS src/cameras/*.h src/cameras/*.cpp)
+file(GLOB_RECURSE PROJ_SRC_MATH src/math/*.h src/MATH/*.cpp)
 file(GLOB_RECURSE PROJ_SHADERS src/shaders/*)
 
 
@@ -110,7 +111,7 @@ endif(KITGL_SUPPORT_FREEGLUT)
 ###
 ### Generating the project files
 ###
-add_executable(${PROJECT_NAME} ${PROJ_SRC} ${PROJ_SRC_OBJS} ${PROJ_SHADERS})
+add_executable(${PROJECT_NAME} ${PROJ_SRC} ${PROJ_SRC_OBJS} ${PROJ_SRC_CAMS} ${PROJ_SRC_MATH} ${PROJ_SHADERS})
 
 
 ###

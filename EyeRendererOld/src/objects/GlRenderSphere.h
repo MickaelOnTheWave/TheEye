@@ -23,9 +23,10 @@ private:
 
    void setupVertexBufferObject();
    void setupElementBufferObject();
+   void setupTextureObject(const TextureVec& _textureFiles);
    void setupVertexArrayAttributes();
 
-   std::vector<float> CreatePointVectorData() const;
+   std::vector<float> CreateVertexBufferData() const;
 
    std::vector<Triangle> triangles;
    std::vector<Vector3> points;
