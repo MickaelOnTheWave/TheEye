@@ -32,7 +32,7 @@ void GlRenderSphere::Render()
 
 void GlRenderSphere::CreateSubdividedSphere(const unsigned int subdivisions)
 {
-   const GLfloat radius = 0.5f;
+   const GLfloat radius = 1.f;
    const GLfloat value = radius * cos(M_PI_4);
 
    // Initial points
@@ -42,10 +42,17 @@ void GlRenderSphere::CreateSubdividedSphere(const unsigned int subdivisions)
    points.push_back(Vector3(-value, -value, value));
 
    // Initial triangles
-   triangles.push_back(Triangle(&points[0], &points[2], &points[3]));
-   triangles.push_back(Triangle(&points[0], &points[1], &points[2]));
-   triangles.push_back(Triangle(&points[0], &points[3], &points[1]));
-   triangles.push_back(Triangle(&points[3], &points[2], &points[1]));
+   triangles.emplace_back(0, 2, 3);
+   triangles.emplace_back(0, 1, 2);
+   triangles.emplace_back(0, 3, 1);
+   triangles.emplace_back(3, 2, 1);
+
+   for (unsigned int currentDivision = 0; currentDivision < subdivisions; ++currentDivision)
+   {
+      const unsigned int triangleCount = triangles.size();
+      for (unsigned int i=0; i<triangleCount; ++i)
+         triangles[i].Subdivide(points, triangles, i);
+   }
 }
 
 void GlRenderSphere::setupVertexBufferObject()
@@ -59,16 +66,11 @@ void GlRenderSphere::setupVertexBufferObject()
 
 void GlRenderSphere::setupElementBufferObject()
 {
-   const GLuint indices[] = {
-       0,2,3,
-       0,1,2,
-       0,3,1,
-       3,2,1,
-   };
+   const vector<GLuint> indices = CreateIndexData();
 
    glGenBuffers(1, &elementBufferObject);
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
-   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 }
 
 vector<float> GlRenderSphere::CreateVertexBufferData() const
@@ -89,6 +91,18 @@ vector<float> GlRenderSphere::CreateVertexBufferData() const
       // Texture coord data
       data.push_back(1.f);
       data.push_back(0.f);
+   }
+   return data;
+}
+
+std::vector<GLuint> GlRenderSphere::CreateIndexData() const
+{
+   vector<GLuint> data;
+   for (const auto& triangle : triangles)
+   {
+      data.push_back(triangle.GetP1());
+      data.push_back(triangle.GetP2());
+      data.push_back(triangle.GetP3());
    }
    return data;
 }

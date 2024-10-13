@@ -23,6 +23,7 @@ private:
    void setupElementBufferObject();
 
    std::vector<float> CreateVertexBufferData() const;
+   std::vector<GLuint> CreateIndexData() const;
 
    std::vector<Triangle> triangles;
    std::vector<Vector3> points;

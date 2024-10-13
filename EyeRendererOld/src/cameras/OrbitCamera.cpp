@@ -4,7 +4,7 @@ OrbitCamera::OrbitCamera(const float _targetX, const float _targetY, const float
    : AbstractGlCamera(),
      targetX(_targetX), targetY(_targetY), targetZ(_targetZ)
 {
-   rotationSpeed = 0.002f;
+   rotationSpeed = 0.004f;
 }
 
 void OrbitCamera::RotateInX(const double angle)

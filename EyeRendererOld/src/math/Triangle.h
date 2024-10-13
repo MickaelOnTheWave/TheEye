@@ -8,17 +8,23 @@
 class Triangle
 {
 public:
-   Triangle(Vector3* _p1, Vector3* _p2, Vector3* _p3);
+   Triangle(const unsigned int _indexP1, const unsigned int _indexP2,
+            const unsigned int _indexP3);
 
-   // The resulting triangles have the ownership of their points.
-   // The points need to be stored somewhere else for the triangle to
-   // be using them as reference, as it is meant.
-   std::vector<Triangle> Subdivide() const;
+   unsigned int GetP1() const;
+   unsigned int GetP2() const;
+   unsigned int GetP3() const;
+
+   void Subdivide(std::vector<Vector3>& pointRepository,
+                  std::vector<Triangle>& triangleRepository,
+                  const std::size_t currentTriangleIndex) const;
 
 private:
-   Vector3* p1;
-   Vector3* p2;
-   Vector3* p3;
+   void MovePointToSphere(Vector3* point) const;
+
+   unsigned int indexP1;
+   unsigned int indexP2;
+   unsigned int indexP3;
 };
 
 #endif // TRIANGLE_H

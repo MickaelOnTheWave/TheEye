@@ -8,7 +8,7 @@
 #include "objects/GlRenderCube.h"
 #include "objects/GlRenderSphere.h"
 
-OrbitCamera camera(2, 0, 2);
+OrbitCamera camera(0, 0, 0);
 double windowXCenter;
 double windowYCenter;
 
@@ -46,9 +46,10 @@ void populateScene(GlRenderer& renderer)
    auto cube1 = new GlRenderCube(textures1);
    auto cube2 = new GlRenderCube(textures2);
    auto cube3 = new GlRenderCube({wallTexture});
-   auto sphere = new GlRenderSphere(0);
+   auto sphere1 = new GlRenderSphere(0);
+   auto sphere2 = new GlRenderSphere(1);
 
-   const int dim = 8;
+   const int dim = 6;
    const float dimScaling = 0.5;
 
    for (int i=0; i<dim; ++i)
@@ -71,7 +72,7 @@ void populateScene(GlRenderer& renderer)
                   renderObj = cube2;
             }
             else
-               renderObj = sphere;
+               renderObj = sphere2;
 
             auto transform1 = Matrix4x4::Scale(0.3);
             transform1 *= Matrix4x4::Translation(i * dimScaling,
@@ -82,6 +83,15 @@ void populateScene(GlRenderer& renderer)
          }
       }
    }
+}
+
+void populateScene2(GlRenderer& renderer)
+{
+   auto sphere1 = new GlRenderSphere(1);
+
+   auto transform1 = Matrix4x4::Scale(0.5);
+   auto instance = new GlRenderedInstance(sphere1, transform1);
+   renderer.AddRenderObject(instance);
 }
 
 int main()
@@ -111,7 +121,7 @@ int main()
         GlRenderer renderer(camera);
         renderer.SetClearColor(0.0f, 0.0f, 0.0f);
 
-        populateScene(renderer);
+        populateScene2(renderer);
 
         renderer.PrepareRendering();
 
