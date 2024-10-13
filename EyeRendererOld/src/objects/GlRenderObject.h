@@ -9,16 +9,20 @@ class GlRenderObject
 public:
    using TextureVec = std::vector<std::pair<std::string, int>>;
 
-   GlRenderObject();
+   GlRenderObject() = default;
    virtual ~GlRenderObject() = default;
 
-   virtual void PrepareRendering(const unsigned int shaderProgramId) = 0;
+   virtual void PrepareRendering(const unsigned int shaderProgramId);
 
    virtual void Render() = 0;
 
 protected:
+   void setupTextureObject(const TextureVec& _textureFiles);
+   void setupVertexArrayAttributes();
+
    void generateTextureObject(const char* imagePath, const unsigned int textureIndex,
                               const unsigned int dataFormat);
+
 
    unsigned int vertexArrayObject;
    unsigned int vertexBufferObject;

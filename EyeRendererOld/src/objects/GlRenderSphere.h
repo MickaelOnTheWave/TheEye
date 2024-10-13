@@ -14,8 +14,6 @@ class GlRenderSphere : public GlRenderObject
 public:
    GlRenderSphere(const unsigned int subdivisions);
 
-   void PrepareRendering(const unsigned int shaderProgramId) override;
-
    void Render() override;
 
 private:
@@ -23,8 +21,6 @@ private:
 
    void setupVertexBufferObject();
    void setupElementBufferObject();
-   void setupTextureObject(const TextureVec& _textureFiles);
-   void setupVertexArrayAttributes();
 
    std::vector<float> CreateVertexBufferData() const;
 

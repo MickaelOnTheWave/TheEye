@@ -6,7 +6,47 @@
 #include "stb_image.h"
 
 
-GlRenderObject::GlRenderObject() {}
+void GlRenderObject::PrepareRendering(const unsigned int shaderProgramId)
+{
+   glUniform1i(glGetUniformLocation(shaderProgramId, "textureCount"), textureFiles.size());
+
+   for (unsigned int i=0; i<textureFiles.size(); ++i)
+   {
+      glActiveTexture(GL_TEXTURE0 + i);
+      glBindTexture(GL_TEXTURE_2D, textureObjects[i]);
+   }
+
+   glBindVertexArray(vertexArrayObject);
+}
+
+void GlRenderObject::setupTextureObject(const TextureVec& _textureFiles)
+{
+   textureFiles = _textureFiles;
+
+   glGenTextures(textureFiles.size(), textureObjects);
+   for (int i=0; i<textureFiles.size(); ++i)
+   {
+      const auto& textureFile = textureFiles[i];
+      generateTextureObject(textureFile.first.c_str(), i, textureFile.second);
+   }
+}
+
+void GlRenderObject::setupVertexArrayAttributes()
+{
+   const GLsizei stride = 8 * sizeof(float);
+
+   // Position
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+   glEnableVertexAttribArray(0);
+
+   // Color
+   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+   glEnableVertexAttribArray(1);
+
+   // Texture coordinates
+   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
+   glEnableVertexAttribArray(2);
+}
 
 void GlRenderObject::generateTextureObject(const char *imagePath, const unsigned int textureIndex,
                                            const unsigned int dataFormat)

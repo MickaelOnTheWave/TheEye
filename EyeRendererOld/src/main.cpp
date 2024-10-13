@@ -63,7 +63,7 @@ void populateScene(GlRenderer& renderer)
                if (j < 4)
                {
                   if (k < 4)
-                     renderObj = sphere;
+                     renderObj = cube1;
                   else
                      renderObj = cube3;
                }
@@ -71,7 +71,7 @@ void populateScene(GlRenderer& renderer)
                   renderObj = cube2;
             }
             else
-               renderObj = cube1;
+               renderObj = sphere;
 
             auto transform1 = Matrix4x4::Scale(0.3);
             transform1 *= Matrix4x4::Translation(i * dimScaling,
