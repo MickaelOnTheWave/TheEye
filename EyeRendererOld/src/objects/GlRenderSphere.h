@@ -4,6 +4,7 @@
 #include "GlRenderObject.h"
 
 #include <glad/gl.h>
+#include <list>
 #include <vector>
 
 #include "math/Triangle.h"
@@ -25,7 +26,7 @@ private:
    std::vector<float> CreateVertexBufferData() const;
    std::vector<GLuint> CreateIndexData() const;
 
-   std::vector<Triangle> triangles;
+   std::list<Triangle> triangles;
    std::vector<Vector3> points;
 
    std::vector<TexCoord> textureCoordinates;

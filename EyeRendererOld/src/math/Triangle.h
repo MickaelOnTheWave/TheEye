@@ -3,6 +3,7 @@
 
 #include "Vector3.h"
 
+#include <list>
 #include <vector>
 
 struct TexCoord
@@ -34,8 +35,8 @@ public:
 
    void Subdivide(std::vector<Vector3>& pointRepository,
                   std::vector<TexCoord> &textureCoordinateRepository,
-                  std::vector<Triangle>& triangleRepository,
-                  const std::size_t currentTriangleIndex) const;
+                  std::list<Triangle> &triangleRepository,
+                  std::list<Triangle>::iterator currentTriangleIt) const;
 
 private:
    void MovePointToSphere(Vector3* point) const;

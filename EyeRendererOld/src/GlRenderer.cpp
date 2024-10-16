@@ -34,6 +34,7 @@ void GlRenderer::AddRenderObject(GlRenderedInstance *object)
 
 void GlRenderer::PrepareRendering()
 {
+   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
    glEnable(GL_DEPTH_TEST);
    shaderProgram.use();
    glUniform1i(glGetUniformLocation(shaderProgram.GetId(), "texture1"), 0);

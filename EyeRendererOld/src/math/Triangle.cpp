@@ -24,8 +24,8 @@ unsigned int Triangle::GetP3() const
 
 void Triangle::Subdivide(vector<Vector3> &pointRepository,
                          vector<TexCoord> &textureCoordinateRepository,
-                         vector<Triangle> &triangleRepository,
-                         const size_t currentTriangleIndex) const
+                         list<Triangle> &triangleRepository,
+                         list<Triangle>::iterator currentTriangleIt) const
 {
    Vector3& p1 = pointRepository[indexP1];
    Vector3& p2 = pointRepository[indexP2];
@@ -34,13 +34,6 @@ void Triangle::Subdivide(vector<Vector3> &pointRepository,
    Vector3* p4 = p1.CreateMedian(p2);
    Vector3* p5 = p2.CreateMedian(p3);
    Vector3* p6 = p3.CreateMedian(p1);
-
-   auto tt1 = p1.ComputeLength();
-   auto tt2 = p2.ComputeLength();
-   auto tt3 = p3.ComputeLength();
-   auto tt4 = p4->ComputeLength();
-   auto tt5 = p5->ComputeLength();
-   auto tt6 = p6->ComputeLength();
 
    MovePointToSphere(p4);
    MovePointToSphere(p5);
@@ -61,18 +54,20 @@ void Triangle::Subdivide(vector<Vector3> &pointRepository,
    TexCoord t3 = textureCoordinateRepository[indexP3];
 
    TexCoord t4 = t1.Middle(t2);
-   TexCoord t5 = t1.Middle(t2);
-   TexCoord t6 = t1.Middle(t2);
+   TexCoord t5 = t2.Middle(t3);
+   TexCoord t6 = t3.Middle(t1);
 
    textureCoordinateRepository.push_back(t4);
    textureCoordinateRepository.push_back(t5);
    textureCoordinateRepository.push_back(t6);
 
-   triangleRepository.erase(triangleRepository.begin() + currentTriangleIndex);
    triangleRepository.emplace_back(indexP4, indexP5, indexP6);
    triangleRepository.emplace_back(indexP1, indexP4, indexP6);
    triangleRepository.emplace_back(indexP4, indexP2, indexP5);
    triangleRepository.emplace_back(indexP6, indexP5, indexP3);
+
+   // Erase at the end, otherwise the iterator will point to another triangle
+   triangleRepository.erase(currentTriangleIt);
 }
 
 void Triangle::MovePointToSphere(Vector3 *point) const

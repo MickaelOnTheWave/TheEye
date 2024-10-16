@@ -47,7 +47,7 @@ void populateScene(GlRenderer& renderer)
    auto cube2 = new GlRenderCube(textures2);
    auto cube3 = new GlRenderCube({wallTexture});
    auto sphere1 = new GlRenderSphere(0);
-   auto sphere2 = new GlRenderSphere(1);
+   auto sphere2 = new GlRenderSphere(4);
 
    const int dim = 6;
    const float dimScaling = 0.5;
@@ -87,7 +87,7 @@ void populateScene(GlRenderer& renderer)
 
 void populateScene2(GlRenderer& renderer)
 {
-   auto sphere1 = new GlRenderSphere(1);
+   auto sphere1 = new GlRenderSphere(2);
 
    auto transform1 = Matrix4x4::Scale(0.5);
    auto instance = new GlRenderedInstance(sphere1, transform1);
