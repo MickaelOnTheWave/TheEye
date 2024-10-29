@@ -1,5 +1,5 @@
-#ifndef GLRENDERSPHERE_H
-#define GLRENDERSPHERE_H
+#ifndef GLRENDERSUBDIVIDEDSPHERE_H
+#define GLRENDERSUBDIVIDEDSPHERE_H
 
 #include "GlRenderObject.h"
 
@@ -10,14 +10,17 @@
 #include "math/Triangle.h"
 #include "math/Vector3.h"
 
-class GlRenderSphere : public GlRenderObject
+class GlRenderSubdividedSphere : public GlRenderObject
 {
 public:
-   GlRenderSphere(const unsigned int subdivisions);
+   GlRenderSubdividedSphere();
+
+   void Initialize(const unsigned int subdivisions);
 
    void Render() override;
 
-private:
+protected:
+   virtual void PopulateInitialGeometry() = 0;
    void CreateSubdividedSphere(const unsigned int subdivisions);
 
    void setupVertexBufferObject();
@@ -28,8 +31,9 @@ private:
 
    std::list<Triangle> triangles;
    std::vector<Vector3> points;
+   std::vector<Vector3> colors;
 
    std::vector<TexCoord> textureCoordinates;
 };
 
-#endif // GLRENDERSPHERE_H
+#endif // GLRENDERSUBDIVIDEDSPHERE_H

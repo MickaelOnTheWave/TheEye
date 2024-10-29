@@ -1,4 +1,3 @@
-#include <iostream>
 #include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -6,7 +5,8 @@
 #include "GlRenderer.h"
 #include "cameras/OrbitCamera.h"
 #include "objects/GlRenderCube.h"
-#include "objects/GlRenderSphere.h"
+#include "objects/GlRenderSphereTetrahedron.h"
+#include "objects/GlRenderSphereOctahedron.h"
 
 OrbitCamera camera(0, 0, 0);
 double windowXCenter;
@@ -15,10 +15,38 @@ double windowYCenter;
 double previousXpos;
 double previousYpos;
 
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+unsigned int subdivLevel = 0;
+GlRenderer* renderer = nullptr;
+
+void PopulateSphereScene()
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
+   auto sphere1 = GlRenderSphereOctahedron::Create(subdivLevel);
+
+   auto transform1 = Matrix4x4::Scale(0.5);
+   auto instance = new GlRenderedInstance(sphere1, transform1);
+   renderer->AddRenderObject(instance);
+}
+
+static void keyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+   if (action == GLFW_PRESS)
+   {
+      if (key == GLFW_KEY_ESCAPE)
+         glfwSetWindowShouldClose(window, GLFW_TRUE);
+      else if (key == GLFW_KEY_KP_ADD)
+      {
+         ++subdivLevel;
+         renderer->ClearScene();
+         PopulateSphereScene();
+      }
+      else if (key == GLFW_KEY_KP_SUBTRACT)
+      {
+         if (subdivLevel > 0)
+            --subdivLevel;
+         renderer->ClearScene();
+         PopulateSphereScene();
+      }
+   }
 }
 
 static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
@@ -46,8 +74,8 @@ void populateScene(GlRenderer& renderer)
    auto cube1 = new GlRenderCube(textures1);
    auto cube2 = new GlRenderCube(textures2);
    auto cube3 = new GlRenderCube({wallTexture});
-   auto sphere1 = new GlRenderSphere(0);
-   auto sphere2 = new GlRenderSphere(4);
+   auto sphere1 = GlRenderSphereTetrahedron::Create(0);
+   auto sphere2 = GlRenderSphereTetrahedron::Create(4);
 
    const int dim = 6;
    const float dimScaling = 0.5;
@@ -85,55 +113,47 @@ void populateScene(GlRenderer& renderer)
    }
 }
 
-void populateScene2(GlRenderer& renderer)
-{
-   auto sphere1 = new GlRenderSphere(2);
-
-   auto transform1 = Matrix4x4::Scale(0.5);
-   auto instance = new GlRenderedInstance(sphere1, transform1);
-   renderer.AddRenderObject(instance);
-}
-
 int main()
 {
-        GLFWwindow* window;
+   GLFWwindow* window;
 
-        if (!glfwInit()) return -1;
+   if (!glfwInit()) return -1;
 
-        const int windowSizeX = 1024;
-        const int windowSizeY = 768;
-        windowXCenter = windowSizeX / 2.0;
-        windowYCenter = windowSizeY / 2.0;
+   const int windowSizeX = 1024;
+   const int windowSizeY = 768;
+   windowXCenter = windowSizeX / 2.0;
+   windowYCenter = windowSizeY / 2.0;
 
-        window = glfwCreateWindow(windowSizeX, windowSizeY, "Eye Renderer", nullptr, nullptr);
-        if (!window)
-        {
-         glfwTerminate();
-         return -1;
-        }
+   window = glfwCreateWindow(windowSizeX, windowSizeY, "Eye Renderer", nullptr, nullptr);
+   if (!window)
+   {
+      glfwTerminate();
+      return -1;
+   }
 
-        glfwSetKeyCallback(window, key_callback);
-        glfwSetCursorPosCallback(window, mouseMoveCallback);
-        glfwMakeContextCurrent(window);
+   glfwSetKeyCallback(window, keyPressCallback);
+   glfwSetCursorPosCallback(window, mouseMoveCallback);
+   glfwMakeContextCurrent(window);
 
-        gladLoadGL(glfwGetProcAddress);
+   gladLoadGL(glfwGetProcAddress);
 
-        GlRenderer renderer(camera);
-        renderer.SetClearColor(0.0f, 0.0f, 0.0f);
+   renderer = new GlRenderer(camera);
+   renderer->SetClearColor(0.0f, 0.0f, 0.0f);
 
-        populateScene2(renderer);
+   populateScene(*renderer);
 
-        renderer.PrepareRendering();
+   renderer->PrepareRendering();
 
-        while (!glfwWindowShouldClose(window))
-        {
-                glfwPollEvents();
-                renderer.Render();
-                glfwSwapBuffers(window);
-        }
+   while (!glfwWindowShouldClose(window))
+   {
+      glfwPollEvents();
+      renderer->Render();
+      glfwSwapBuffers(window);
+   }
 
-        // Clean up
-        glfwTerminate();
-        return 0;
+   // Clean up
+   delete renderer;
+   glfwTerminate();
+   return 0;
 }
 

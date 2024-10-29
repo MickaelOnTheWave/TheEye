@@ -1,10 +1,12 @@
-#include "GlRenderSphere.h"
-
-#include <math.h>
+#include "GlRenderSubdividedSphere.h"
 
 using namespace std;
 
-GlRenderSphere::GlRenderSphere(const unsigned int subdivisions)
+GlRenderSubdividedSphere::GlRenderSubdividedSphere()
+{
+}
+
+void GlRenderSubdividedSphere::Initialize(const unsigned int subdivisions)
 {
    const std::pair<std::string, int> faceTexture = {"data/awesomeface.png", GL_RGBA};
    const std::pair<std::string, int> wallTexture = {"data/wall.jpg", GL_RGB};
@@ -20,9 +22,10 @@ GlRenderSphere::GlRenderSphere(const unsigned int subdivisions)
    setupTextureObject(_textureFiles);
 
    setupVertexArrayAttributes();
+
 }
 
-void GlRenderSphere::Render()
+void GlRenderSubdividedSphere::Render()
 {
    const unsigned int vertexPerFace = 3;
    const unsigned int faceCount = triangles.size();
@@ -30,29 +33,9 @@ void GlRenderSphere::Render()
    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }
 
-void GlRenderSphere::CreateSubdividedSphere(const unsigned int subdivisions)
+void GlRenderSubdividedSphere::CreateSubdividedSphere(const unsigned int subdivisions)
 {
-   const GLfloat radius = 1.f;
-   const float angle = M_PI / 6.f;
-   const GLfloat cosAngle = cos(angle);
-   const GLfloat sinAngle = sin(angle);
-
-   // Initial points
-   points.emplace_back(0.f, radius, 0.f);
-   points.emplace_back(0.f, -sinAngle, -cosAngle);
-   points.emplace_back(cosAngle * sinAngle, -sinAngle, cosAngle * cosAngle);
-   points.emplace_back(-cosAngle * sinAngle, -sinAngle, cosAngle * cosAngle);
-
-   textureCoordinates.emplace_back(0.5f, 1.f);
-   textureCoordinates.emplace_back(0.f, 0.f);
-   textureCoordinates.emplace_back(1.f, 0.f);
-   textureCoordinates.emplace_back(0.f, 0.f);
-
-   // Initial triangles
-   triangles.emplace_back(0, 2, 3);
-   triangles.emplace_back(0, 1, 2);
-   triangles.emplace_back(0, 3, 1);
-   triangles.emplace_back(3, 2, 1);
+   PopulateInitialGeometry();
 
    for (unsigned int currentDivision = 0; currentDivision < subdivisions; ++currentDivision)
    {
@@ -67,7 +50,7 @@ void GlRenderSphere::CreateSubdividedSphere(const unsigned int subdivisions)
    }
 }
 
-void GlRenderSphere::setupVertexBufferObject()
+void GlRenderSubdividedSphere::setupVertexBufferObject()
 {
    const vector<float> verticesColorsTexcoords = CreateVertexBufferData();
 
@@ -76,7 +59,7 @@ void GlRenderSphere::setupVertexBufferObject()
    glBufferData(GL_ARRAY_BUFFER, verticesColorsTexcoords.size() * sizeof(float), verticesColorsTexcoords.data(), GL_STATIC_DRAW);
 }
 
-void GlRenderSphere::setupElementBufferObject()
+void GlRenderSubdividedSphere::setupElementBufferObject()
 {
    const vector<GLuint> indices = CreateIndexData();
 
@@ -85,13 +68,14 @@ void GlRenderSphere::setupElementBufferObject()
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 }
 
-vector<float> GlRenderSphere::CreateVertexBufferData() const
+vector<float> GlRenderSubdividedSphere::CreateVertexBufferData() const
 {
    vector<float> data;
 
    for (unsigned int i=0; i < points.size(); ++i)
    {
       const auto& point = points[i];
+      const auto& color = colors[i];
       const auto& texCoord = textureCoordinates[i];
 
       // Point data
@@ -101,8 +85,12 @@ vector<float> GlRenderSphere::CreateVertexBufferData() const
 
       // Color data
       data.push_back(1.f);
-      data.push_back(0.5f);
-      data.push_back(0.1f);
+      data.push_back(1.f);
+      data.push_back(1.f);
+
+      /*data.push_back(color.X());
+      data.push_back(color.Y());
+      data.push_back(color.Z());*/
 
       // Texture coord data
       data.push_back(texCoord.u);
@@ -111,7 +99,7 @@ vector<float> GlRenderSphere::CreateVertexBufferData() const
    return data;
 }
 
-std::vector<GLuint> GlRenderSphere::CreateIndexData() const
+std::vector<GLuint> GlRenderSubdividedSphere::CreateIndexData() const
 {
    vector<GLuint> data;
    for (const auto& triangle : triangles)

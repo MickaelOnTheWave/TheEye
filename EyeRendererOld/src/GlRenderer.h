@@ -14,6 +14,8 @@ public:
    GlRenderer(AbstractGlCamera& _camera);
    virtual ~GlRenderer();
 
+   void ClearScene();
+
    void SetClearColor(const float r, const float g, const float b);
 
    void AddRenderObject(GlRenderedInstance* object);

@@ -8,6 +8,11 @@ GlRenderer::GlRenderer(AbstractGlCamera& _camera)
 
 GlRenderer::~GlRenderer()
 {
+   ClearScene();
+}
+
+void GlRenderer::ClearScene()
+{
    for (auto& renderObj : renderObjects)
    {
       for (const auto renderedObj : renderObj.second)

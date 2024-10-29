@@ -1,0 +1,17 @@
+#ifndef GLRENDERSPHEREOCTAHEDRON_H
+#define GLRENDERSPHEREOCTAHEDRON_H
+
+#include "GlRenderSubdividedSphere.h"
+
+class GlRenderSphereOctahedron : public GlRenderSubdividedSphere
+{
+public:
+   virtual ~GlRenderSphereOctahedron() = default;
+
+   static GlRenderSphereOctahedron* Create(const unsigned int subdivisions);
+
+protected:
+   void PopulateInitialGeometry() override;
+};
+
+#endif // GLRENDERSPHEREOCTAHEDRON_H
