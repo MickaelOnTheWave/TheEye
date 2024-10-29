@@ -5,6 +5,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+using namespace std;
 
 void GlRenderObject::PrepareRendering(const unsigned int shaderProgramId)
 {
@@ -19,10 +20,43 @@ void GlRenderObject::PrepareRendering(const unsigned int shaderProgramId)
    glBindVertexArray(vertexArrayObject);
 }
 
-void GlRenderObject::setupTextureObject(const TextureVec& _textureFiles)
+void GlRenderObject::SetTextures(const TextureVec &textures)
 {
-   textureFiles = _textureFiles;
+   textureFiles = textures;
+}
 
+void GlRenderObject::InitializeGlData()
+{
+   glGenVertexArrays(1, &vertexArrayObject);
+   glBindVertexArray(vertexArrayObject);
+
+   setupVertexBufferObject();
+   setupElementBufferObject();
+   setupTextureObject();
+
+   setupVertexArrayAttributes();
+}
+
+void GlRenderObject::setupVertexBufferObject()
+{
+   const vector<float> verticesColorsTexcoords = CreateVertexBufferData();
+
+   glGenBuffers(1, &vertexBufferObject);
+   glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+   glBufferData(GL_ARRAY_BUFFER, verticesColorsTexcoords.size() * sizeof(float), verticesColorsTexcoords.data(), GL_STATIC_DRAW);
+}
+
+void GlRenderObject::setupElementBufferObject()
+{
+   const vector<GLuint> indices = CreateIndexData();
+
+   glGenBuffers(1, &elementBufferObject);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
+   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
+}
+
+void GlRenderObject::setupTextureObject()
+{
    glGenTextures(textureFiles.size(), textureObjects);
    for (int i=0; i<textureFiles.size(); ++i)
    {

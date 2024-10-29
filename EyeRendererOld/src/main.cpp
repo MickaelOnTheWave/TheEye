@@ -20,7 +20,9 @@ GlRenderer* renderer = nullptr;
 
 void PopulateSphereScene()
 {
-   auto sphere1 = GlRenderSphereOctahedron::Create(subdivLevel);
+   const GlRenderObject::Texture wallTexture = {"data/eye-blue.jpg", GL_RGB};
+   auto sphere1 = new GlRenderSphereOctahedron();
+   sphere1->Initialize(subdivLevel, {wallTexture});
 
    auto transform1 = Matrix4x4::Scale(0.5);
    auto instance = new GlRenderedInstance(sphere1, transform1);
@@ -74,8 +76,10 @@ void populateScene(GlRenderer& renderer)
    auto cube1 = new GlRenderCube(textures1);
    auto cube2 = new GlRenderCube(textures2);
    auto cube3 = new GlRenderCube({wallTexture});
-   auto sphere1 = GlRenderSphereTetrahedron::Create(0);
-   auto sphere2 = GlRenderSphereTetrahedron::Create(4);
+   auto sphere1 = new GlRenderSphereTetrahedron();
+   sphere1->Initialize(0, textures1);
+   auto sphere2 = new GlRenderSphereTetrahedron();
+   sphere2->Initialize(4, textures2);
 
    const int dim = 6;
    const float dimScaling = 0.5;

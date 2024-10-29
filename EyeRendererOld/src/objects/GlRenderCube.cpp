@@ -2,16 +2,12 @@
 
 #include <glad/gl.h>
 
+using namespace std;
+
 GlRenderCube::GlRenderCube(const TextureVec &_textureFiles)
 {
-   glGenVertexArrays(1, &vertexArrayObject);
-   glBindVertexArray(vertexArrayObject);
-
-   setupVertexBufferObject();
-   setupElementBufferObject();
-   setupTextureObject(_textureFiles);
-
-   setupVertexArrayAttributes();
+   SetTextures(_textureFiles);
+   InitializeGlData();
 }
 
 void GlRenderCube::Render()
@@ -22,10 +18,10 @@ void GlRenderCube::Render()
    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }
 
-void GlRenderCube::setupVertexBufferObject()
+vector<GLfloat> GlRenderCube::CreateVertexBufferData() const
 {
    const GLfloat value = 0.5f;
-   const GLfloat verticesColorsTexcoords[] = {
+   const vector<GLfloat> verticesColorsTexcoords = {
        -value, -value,  value,   1.f,0.f,0.f,   0.f,0.f,
        value, -value,  value,   0.f,1.f,0.f,   1.f,0.f,
        value,  value,  value,   0.f,0.f,1.f,   1.f,1.f,
@@ -36,15 +32,12 @@ void GlRenderCube::setupVertexBufferObject()
        value,  value, -value,   0.f,1.f,1.f,   0.f,1.f,
        -value,  value, -value,   1.f,0.f,1.f,   1.f,1.f
    };
-
-   glGenBuffers(1, &vertexBufferObject);
-   glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-   glBufferData(GL_ARRAY_BUFFER, sizeof(verticesColorsTexcoords), verticesColorsTexcoords, GL_STATIC_DRAW);
+   return verticesColorsTexcoords;
 }
 
-void GlRenderCube::setupElementBufferObject()
+vector<GLuint> GlRenderCube::CreateIndexData() const
 {
-   const GLuint indices[] = {
+   const vector<GLuint> indices = {
        0,1,2, 0,2,3,
        1,5,6, 1,6,2,
        5,4,7, 5,7,6,
@@ -52,9 +45,5 @@ void GlRenderCube::setupElementBufferObject()
        3,2,6, 3,6,7,
        4,5,1, 4,1,0
    };
-
-   glGenBuffers(1, &elementBufferObject);
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
-   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+   return indices;
 }
-

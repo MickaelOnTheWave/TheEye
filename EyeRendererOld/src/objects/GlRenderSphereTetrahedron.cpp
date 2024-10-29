@@ -2,13 +2,6 @@
 
 #include <math.h>
 
-GlRenderSphereTetrahedron *GlRenderSphereTetrahedron::Create(const unsigned int subdivisions)
-{
-   auto instance = new GlRenderSphereTetrahedron();
-   instance->Initialize(subdivisions);
-   return instance;
-}
-
 void GlRenderSphereTetrahedron::PopulateInitialGeometry()
 {
    const GLfloat radius = 1.f;

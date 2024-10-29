@@ -4,10 +4,13 @@
 #include <string>
 #include <vector>
 
+#include <glad/gl.h>
+
 class GlRenderObject
 {
 public:
-   using TextureVec = std::vector<std::pair<std::string, int>>;
+   using Texture = std::pair<std::string, int>;
+   using TextureVec = std::vector<Texture>;
 
    GlRenderObject() = default;
    virtual ~GlRenderObject() = default;
@@ -16,8 +19,18 @@ public:
 
    virtual void Render() = 0;
 
+   void SetTextures(const TextureVec& textures);
+
 protected:
-   void setupTextureObject(const TextureVec& _textureFiles);
+
+   virtual std::vector<GLfloat> CreateVertexBufferData() const = 0;
+   virtual std::vector<GLuint> CreateIndexData() const = 0;
+
+   void InitializeGlData();
+
+   void setupVertexBufferObject();
+   void setupElementBufferObject();
+   void setupTextureObject();
    void setupVertexArrayAttributes();
 
    void generateTextureObject(const char* imagePath, const unsigned int textureIndex,

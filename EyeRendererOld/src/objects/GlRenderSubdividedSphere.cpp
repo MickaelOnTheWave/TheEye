@@ -6,23 +6,12 @@ GlRenderSubdividedSphere::GlRenderSubdividedSphere()
 {
 }
 
-void GlRenderSubdividedSphere::Initialize(const unsigned int subdivisions)
+void GlRenderSubdividedSphere::Initialize(const unsigned int subdivisions,
+                                          const TextureVec &_textureFiles)
 {
-   const std::pair<std::string, int> faceTexture = {"data/awesomeface.png", GL_RGBA};
-   const std::pair<std::string, int> wallTexture = {"data/wall.jpg", GL_RGB};
-   const TextureVec _textureFiles = {wallTexture, faceTexture};
-
+   SetTextures(_textureFiles);
    CreateSubdividedSphere(subdivisions);
-
-   glGenVertexArrays(1, &vertexArrayObject);
-   glBindVertexArray(vertexArrayObject);
-
-   setupVertexBufferObject();
-   setupElementBufferObject();
-   setupTextureObject(_textureFiles);
-
-   setupVertexArrayAttributes();
-
+   InitializeGlData();
 }
 
 void GlRenderSubdividedSphere::Render()
@@ -50,25 +39,7 @@ void GlRenderSubdividedSphere::CreateSubdividedSphere(const unsigned int subdivi
    }
 }
 
-void GlRenderSubdividedSphere::setupVertexBufferObject()
-{
-   const vector<float> verticesColorsTexcoords = CreateVertexBufferData();
-
-   glGenBuffers(1, &vertexBufferObject);
-   glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-   glBufferData(GL_ARRAY_BUFFER, verticesColorsTexcoords.size() * sizeof(float), verticesColorsTexcoords.data(), GL_STATIC_DRAW);
-}
-
-void GlRenderSubdividedSphere::setupElementBufferObject()
-{
-   const vector<GLuint> indices = CreateIndexData();
-
-   glGenBuffers(1, &elementBufferObject);
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
-   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
-}
-
-vector<float> GlRenderSubdividedSphere::CreateVertexBufferData() const
+vector<GLfloat> GlRenderSubdividedSphere::CreateVertexBufferData() const
 {
    vector<float> data;
 

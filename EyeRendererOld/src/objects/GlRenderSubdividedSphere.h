@@ -15,7 +15,7 @@ class GlRenderSubdividedSphere : public GlRenderObject
 public:
    GlRenderSubdividedSphere();
 
-   void Initialize(const unsigned int subdivisions);
+   void Initialize(const unsigned int subdivisions, const TextureVec &_textureFiles);
 
    void Render() override;
 
@@ -23,11 +23,8 @@ protected:
    virtual void PopulateInitialGeometry() = 0;
    void CreateSubdividedSphere(const unsigned int subdivisions);
 
-   void setupVertexBufferObject();
-   void setupElementBufferObject();
-
-   std::vector<float> CreateVertexBufferData() const;
-   std::vector<GLuint> CreateIndexData() const;
+   std::vector<GLfloat> CreateVertexBufferData() const override;
+   std::vector<GLuint> CreateIndexData() const override;
 
    std::list<Triangle> triangles;
    std::vector<Vector3> points;

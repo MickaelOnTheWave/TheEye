@@ -119,8 +119,11 @@ add_executable(${PROJECT_NAME} ${PROJ_SRC} ${PROJ_SRC_OBJS} ${PROJ_SRC_CAMS} ${P
 ###
 target_link_libraries(${PROJECT_NAME} ${PROJ_LINK_LIBS})
 
-configure_file(${CMAKE_SOURCE_DIR}/src/shaders/basic.vert ${CMAKE_CURRENT_BINARY_DIR}/data/basic.vert COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/src/shaders/basic.frag ${CMAKE_CURRENT_BINARY_DIR}/data/basic.frag COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/src/shaders/singleTexture.frag ${CMAKE_CURRENT_BINARY_DIR}/data/singleTexture.frag COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/src/shaders/basic.vert ${CMAKE_CURRENT_BINARY_DIR}/data/basic.vert COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/data/texture-wood.jpeg ${CMAKE_CURRENT_BINARY_DIR}/data/texture-wood.jpeg COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/data/wall.jpg          ${CMAKE_CURRENT_BINARY_DIR}/data/wall.jpg COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/data/awesomeface.png   ${CMAKE_CURRENT_BINARY_DIR}/data/awesomeface.png COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/data/eye-red.jpeg   ${CMAKE_CURRENT_BINARY_DIR}/data/eye-red.jpeg COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/data/eye-blue.jpg   ${CMAKE_CURRENT_BINARY_DIR}/data/eye-blue.jpg COPYONLY)

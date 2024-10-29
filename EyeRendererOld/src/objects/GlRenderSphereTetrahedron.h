@@ -8,8 +8,6 @@ class GlRenderSphereTetrahedron : public GlRenderSubdividedSphere
 public:
    virtual ~GlRenderSphereTetrahedron() = default;
 
-   static GlRenderSphereTetrahedron* Create(const unsigned int subdivisions);
-
 protected:
    void PopulateInitialGeometry() override;
 };

@@ -1,12 +1,5 @@
 #include "GlRenderSphereOctahedron.h"
 
-GlRenderSphereOctahedron *GlRenderSphereOctahedron::Create(const unsigned int subdivisions)
-{
-   auto instance = new GlRenderSphereOctahedron();
-   instance->Initialize(subdivisions);
-   return instance;
-}
-
 void GlRenderSphereOctahedron::PopulateInitialGeometry()
 {
    const GLfloat radius = 1.f;

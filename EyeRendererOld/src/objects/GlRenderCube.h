@@ -10,7 +10,10 @@ public:
 
    void Render() override;
 
-private:
+protected:
+   std::vector<GLfloat> CreateVertexBufferData() const override;
+   std::vector<GLuint> CreateIndexData() const override;
+
    void setupVertexBufferObject();
    void setupElementBufferObject();
 };
