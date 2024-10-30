@@ -6,7 +6,7 @@
 #include "cameras/OrbitCamera.h"
 #include "objects/GlRenderCube.h"
 #include "objects/GlRenderSphereTetrahedron.h"
-#include "objects/GlRenderSphereOctahedron.h"
+#include "objects/GlRenderSpherePolar.h"
 
 OrbitCamera camera(0, 0, 0);
 double windowXCenter;
@@ -22,7 +22,7 @@ void PopulateSphereScene()
 {
    //const GlRenderObject::Texture wallTexture = {"data/eye-blue.jpg", GL_RGB};
    const GlRenderObject::Texture wallTexture = {"data/testTexture.png", GL_RGB};
-   auto sphere1 = new GlRenderSphereOctahedron();
+   auto sphere1 = new GlRenderSpherePolar();
    sphere1->Initialize(subdivLevel, {wallTexture});
 
    auto transform1 = Matrix4x4::Scale(0.5);

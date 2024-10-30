@@ -4,9 +4,6 @@ void GlRenderSphereOctahedron::PopulateInitialGeometry()
 {
    const GLfloat radius = 1.f;
 
-   //const GLfloat texU = 0.5f + (arctan2(dz, dx) / 2 * M_PI);
-   //const GLfloat texV = 0.5f + (arcsin(dy) / 2 * M_PI);
-
    // Initial points
    points.emplace_back(0.f, radius, 0.f);
    points.emplace_back(0.f, 0.f, -radius);

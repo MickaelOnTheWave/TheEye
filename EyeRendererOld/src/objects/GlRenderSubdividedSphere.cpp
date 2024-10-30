@@ -2,14 +2,6 @@
 
 using namespace std;
 
-void GlRenderSubdividedSphere::Render()
-{
-   const unsigned int vertexPerFace = 3;
-   const unsigned int faceCount = triangles.size();
-   const unsigned int indexCount = vertexPerFace * faceCount;
-   glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-}
-
 void GlRenderSubdividedSphere::PopulateGeometry(const unsigned int subdivisions)
 {
    PopulateInitialGeometry();
@@ -25,16 +17,4 @@ void GlRenderSubdividedSphere::PopulateGeometry(const unsigned int subdivisions)
          itTriangle->Subdivide(points, textureCoordinates, triangles, itTriangle);
       }
    }
-}
-
-std::vector<GLuint> GlRenderSubdividedSphere::CreateIndexData() const
-{
-   vector<GLuint> data;
-   for (const auto& triangle : triangles)
-   {
-      data.push_back(triangle.GetP1());
-      data.push_back(triangle.GetP2());
-      data.push_back(triangle.GetP3());
-   }
-   return data;
 }

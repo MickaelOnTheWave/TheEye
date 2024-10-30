@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-void GlRenderSphereOctahedron2::PopulateGeometry(const unsigned int subdivisions)
+void GlRenderSpherePolar::PopulateGeometry(const unsigned int subdivisions)
 {
    const GLfloat radius = 1.f;
 
@@ -35,6 +35,16 @@ void GlRenderSphereOctahedron2::PopulateGeometry(const unsigned int subdivisions
          const float u = static_cast<float>(j) / horizontalPointCount;
          const float v = static_cast<float>(i) / verticalPointCount;
          textureCoordinates.emplace_back(u, v);
+      }
+   }
+
+   for (int i=1; i<verticalPointCount-1; ++i)
+   {
+      for (int j=1; j<horizontalPointCount-1; ++j)
+      {
+         const unsigned int currentIndex = j + i * horizontalPointCount;
+         triangles.emplace_back(currentIndex, currentIndex + 1, currentIndex + 1 + horizontalPointCount);
+         triangles.emplace_back(currentIndex, currentIndex + 1 + horizontalPointCount, currentIndex + horizontalPointCount);
       }
    }
 }

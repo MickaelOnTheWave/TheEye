@@ -1,16 +1,16 @@
-#ifndef GLRENDERSPHEREOCTAHEDRON2_H
-#define GLRENDERSPHEREOCTAHEDRON2_H
+#ifndef GLRENDERSPHEREPOLAR_H
+#define GLRENDERSPHEREPOLAR_H
 
 #include "GlRenderSphere.h"
 
-class GlRenderSphereOctahedron2 : public GlRenderSphere
+class GlRenderSpherePolar : public GlRenderSphere
 {
 public:
-   GlRenderSphereOctahedron2() = default;
-   virtual ~GlRenderSphereOctahedron2() = default;
+   GlRenderSpherePolar() = default;
+   virtual ~GlRenderSpherePolar() = default;
 
 protected:
    void PopulateGeometry(const unsigned int subdivisions) override;
 };
 
-#endif // GLRENDERSPHEREOCTAHEDRON_H
+#endif // GLRENDERSPHEREPOLAR_H

@@ -10,6 +10,14 @@ void GlRenderSphere::Initialize(const unsigned int subdivisions,
    InitializeGlData();
 }
 
+void GlRenderSphere::Render()
+{
+   const unsigned int vertexPerFace = 3;
+   const unsigned int faceCount = triangles.size();
+   const unsigned int indexCount = vertexPerFace * faceCount;
+   glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+}
+
 vector<GLfloat> GlRenderSphere::CreateVertexBufferData() const
 {
    vector<float> data;
@@ -37,6 +45,18 @@ vector<GLfloat> GlRenderSphere::CreateVertexBufferData() const
       // Texture coord data
       data.push_back(texCoord.u);
       data.push_back(texCoord.v);
+   }
+   return data;
+}
+
+std::vector<GLuint> GlRenderSphere::CreateIndexData() const
+{
+   vector<GLuint> data;
+   for (const auto& triangle : triangles)
+   {
+      data.push_back(triangle.GetP1());
+      data.push_back(triangle.GetP2());
+      data.push_back(triangle.GetP3());
    }
    return data;
 }
