@@ -127,3 +127,4 @@ configure_file(${CMAKE_SOURCE_DIR}/data/wall.jpg          ${CMAKE_CURRENT_BINARY
 configure_file(${CMAKE_SOURCE_DIR}/data/awesomeface.png   ${CMAKE_CURRENT_BINARY_DIR}/data/awesomeface.png COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/data/eye-red.jpeg   ${CMAKE_CURRENT_BINARY_DIR}/data/eye-red.jpeg COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/data/eye-blue.jpg   ${CMAKE_CURRENT_BINARY_DIR}/data/eye-blue.jpg COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/data/testTexture.png   ${CMAKE_CURRENT_BINARY_DIR}/data/testTexture.png COPYONLY)
