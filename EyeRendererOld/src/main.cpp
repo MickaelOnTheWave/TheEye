@@ -20,8 +20,8 @@ GlRenderer* renderer = nullptr;
 
 void PopulateSphereScene()
 {
-   //const GlRenderObject::Texture wallTexture = {"data/eye-blue.jpg", GL_RGB};
-   const GlRenderObject::Texture wallTexture = {"data/testTexture.png", GL_RGB};
+   const GlRenderObject::Texture wallTexture = {"data/eye-blue.jpg", GL_RGB};
+   //const GlRenderObject::Texture wallTexture = {"data/testTexture.png", GL_RGB};
    auto sphere1 = new GlRenderSpherePolar();
    sphere1->Initialize(subdivLevel, {wallTexture});
 
