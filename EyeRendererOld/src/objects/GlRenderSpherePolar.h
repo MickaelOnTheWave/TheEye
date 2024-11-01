@@ -11,6 +11,12 @@ public:
 
 protected:
    void PopulateGeometry(const unsigned int subdivisions) override;
+
+private:
+   void PopulateCoordinates(const unsigned int horizontalPointCount,
+                            const unsigned int verticalPointCount);
+   void PopulateTriangles(const unsigned int horizontalPointCount,
+                          const unsigned int verticalPointCount);
 };
 
 #endif // GLRENDERSPHEREPOLAR_H

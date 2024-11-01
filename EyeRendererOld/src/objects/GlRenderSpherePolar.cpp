@@ -4,11 +4,16 @@
 
 void GlRenderSpherePolar::PopulateGeometry(const unsigned int subdivisions)
 {
+   const unsigned int horizontalPointCount = pow(2, subdivisions + 2);
+   const unsigned int verticalPointCount = pow(2, subdivisions + 1);
+
+   PopulateCoordinates(horizontalPointCount, verticalPointCount);
+   PopulateTriangles(horizontalPointCount, verticalPointCount);
+}
+
+void GlRenderSpherePolar::PopulateCoordinates(const unsigned int horizontalPointCount, const unsigned int verticalPointCount)
+{
    const GLfloat radius = 1.f;
-
-   int horizontalPointCount = pow(2, subdivisions + 2);
-   int verticalPointCount = pow(2, subdivisions + 1);
-
    const GLfloat horizontalAnglePerSlice = 2 * M_PI / static_cast<GLfloat>(horizontalPointCount);
    const GLfloat verticalAnglePerSlice = M_PI / static_cast<GLfloat>(verticalPointCount);
 
@@ -45,9 +50,10 @@ void GlRenderSpherePolar::PopulateGeometry(const unsigned int subdivisions)
    points.emplace_back(0.f, -radius, 0.f);
    colors.emplace_back(1.f, 1.f, 1.f);
    textureCoordinates.emplace_back(0.5f, 1.f);
+}
 
-   ///////////////////////
-
+void GlRenderSpherePolar::PopulateTriangles(const unsigned int horizontalPointCount, const unsigned int verticalPointCount)
+{
    for (int j=0; j<horizontalPointCount-1; ++j)
       triangles.emplace_back(0, j+2, j+1);
    triangles.emplace_back(0, 1, horizontalPointCount);
@@ -73,5 +79,4 @@ void GlRenderSpherePolar::PopulateGeometry(const unsigned int subdivisions)
    for (int i = startIndex; i < finalIndex; ++i)
       triangles.emplace_back(i, finalIndex-1, i+1);
    triangles.emplace_back(finalIndex-2, finalIndex-1, startIndex);
-
 }
