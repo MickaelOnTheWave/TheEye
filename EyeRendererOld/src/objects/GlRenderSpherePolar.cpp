@@ -14,7 +14,7 @@ void GlRenderSpherePolar::PopulateGeometry(const unsigned int subdivisions)
 
    points.emplace_back(0.f, radius, 0.f);
    colors.emplace_back(1.f, 1.f, 1.f);
-   textureCoordinates.emplace_back(0.5f, 1.f);
+   textureCoordinates.emplace_back(0.5f, 0.f);
 
    for (int i=1; i<verticalPointCount; ++i)
    {
@@ -22,6 +22,8 @@ void GlRenderSpherePolar::PopulateGeometry(const unsigned int subdivisions)
 
       const float y = radius * cos(verticalAngle);
       const float plane = radius * sin(verticalAngle);
+
+      const float v = static_cast<float>(i) / verticalPointCount;
 
       for (int j=0; j<horizontalPointCount; ++j)
       {
@@ -36,14 +38,13 @@ void GlRenderSpherePolar::PopulateGeometry(const unsigned int subdivisions)
          //const GLfloat texV = 0.5f + (arcsin(dy) / 2 * M_PI);
 
          const float u = static_cast<float>(j) / horizontalPointCount;
-         const float v = static_cast<float>(i) / verticalPointCount;
          textureCoordinates.emplace_back(u, v);
       }
    }
 
    points.emplace_back(0.f, -radius, 0.f);
    colors.emplace_back(1.f, 1.f, 1.f);
-   textureCoordinates.emplace_back(0.5f, 0.f);
+   textureCoordinates.emplace_back(0.5f, 1.f);
 
    ///////////////////////
 
@@ -53,16 +54,20 @@ void GlRenderSpherePolar::PopulateGeometry(const unsigned int subdivisions)
 
    for (int i=0; i<verticalPointCount-2; ++i)
    {
-      for (int j=1; j<horizontalPointCount-1; ++j)
+      const unsigned int verticalIndex = i * horizontalPointCount + 1;
+      for (int j=0; j<horizontalPointCount-1; ++j)
       {
-         const unsigned int currentIndex = j + i * horizontalPointCount + 1;
+         const unsigned int currentIndex = j + verticalIndex;
          triangles.emplace_back(currentIndex, currentIndex + 1, currentIndex + 1 + horizontalPointCount);
          triangles.emplace_back(currentIndex, currentIndex + 1 + horizontalPointCount, currentIndex + horizontalPointCount);
       }
+      const unsigned int currentIndex = horizontalPointCount + verticalIndex - 1;
+      triangles.emplace_back(currentIndex, verticalIndex, verticalIndex + 1 + horizontalPointCount);
+      //triangles.emplace_back(currentIndex, verticalIndex + 1 + horizontalPointCount, verticalIndex + horizontalPointCount);
    }
 
    const unsigned int finalIndex = points.size();
-   const unsigned int startIndex = finalIndex - horizontalPointCount;
+   const unsigned int startIndex = finalIndex - horizontalPointCount - 1;
    for (int i = startIndex; i < finalIndex; ++i)
       triangles.emplace_back(i, finalIndex-1, i+1);
    triangles.emplace_back(finalIndex-2, finalIndex-1, startIndex);
