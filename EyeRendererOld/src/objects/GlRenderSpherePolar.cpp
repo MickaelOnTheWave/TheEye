@@ -61,9 +61,11 @@ void GlRenderSpherePolar::PopulateGeometry(const unsigned int subdivisions)
          triangles.emplace_back(currentIndex, currentIndex + 1, currentIndex + 1 + horizontalPointCount);
          triangles.emplace_back(currentIndex, currentIndex + 1 + horizontalPointCount, currentIndex + horizontalPointCount);
       }
-      const unsigned int currentIndex = horizontalPointCount + verticalIndex - 1;
-      triangles.emplace_back(currentIndex, verticalIndex, verticalIndex + 1 + horizontalPointCount);
-      //triangles.emplace_back(currentIndex, verticalIndex + 1 + horizontalPointCount, verticalIndex + horizontalPointCount);
+
+      const unsigned int finalJ = horizontalPointCount - 1;
+      const unsigned int currentIndex = finalJ + verticalIndex;
+      triangles.emplace_back(currentIndex, verticalIndex, verticalIndex + horizontalPointCount);
+      triangles.emplace_back(currentIndex, verticalIndex + horizontalPointCount, currentIndex + horizontalPointCount);
    }
 
    const unsigned int finalIndex = points.size();
