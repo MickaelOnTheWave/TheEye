@@ -34,4 +34,15 @@ public :
    void MapBottom() override;
 };
 
+class HalfWrapSphereMapping : public FullWrapSphereMapping
+{
+   public :
+   HalfWrapSphereMapping(std::vector<TexCoord>& _textureCoordinates,
+                         const unsigned int horizontalCount, const unsigned int verticalCount);
+   virtual ~HalfWrapSphereMapping() = default;
+
+   void Map(const unsigned verticalIndex, const unsigned int horizontalIndex) override;
+};
+
+
 #endif // SPHERETEXTUREMAPPINGS_H

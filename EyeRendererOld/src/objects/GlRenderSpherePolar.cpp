@@ -83,5 +83,7 @@ SphereTextureMapping *GlRenderSpherePolar::CreateMappingAlgorithm()
 {
    if (textureMapping == TextureMap::FullWrap)
       return new FullWrapSphereMapping(textureCoordinates, horizontalPointCount, verticalPointCount);
+   else if (textureMapping == TextureMap::HalfWrap)
+      return new HalfWrapSphereMapping(textureCoordinates, horizontalPointCount, verticalPointCount);
    return nullptr;
 }

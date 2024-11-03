@@ -8,14 +8,14 @@ SphereTextureMapping::SphereTextureMapping(std::vector<TexCoord> &_textureCoordi
 {
 }
 
+/******/
+
 FullWrapSphereMapping::FullWrapSphereMapping(std::vector<TexCoord> &_textureCoordinates,
                                              const unsigned int horizontalCount,
                                              const unsigned int verticalCount)
   : SphereTextureMapping(_textureCoordinates, horizontalCount, verticalCount)
 {
 }
-
-/******/
 
 void FullWrapSphereMapping::MapTop()
 {
@@ -32,4 +32,30 @@ void FullWrapSphereMapping::Map(const unsigned int verticalIndex, const unsigned
 void FullWrapSphereMapping::MapBottom()
 {
    textureCoordinates.emplace_back(0.5f, 1.f);
+}
+
+/******/
+
+HalfWrapSphereMapping::HalfWrapSphereMapping(std::vector<TexCoord> &_textureCoordinates,
+                                             const unsigned int horizontalCount,
+                                             const unsigned int verticalCount)
+  : FullWrapSphereMapping(_textureCoordinates, horizontalCount, verticalCount)
+{
+}
+
+void HalfWrapSphereMapping::Map(const unsigned int verticalIndex, const unsigned int horizontalIndex)
+{
+   const float minU = 0.25f;
+   const float maxU = 0.75f;
+   float u = static_cast<float>(horizontalIndex) / horizontalPointCount;
+   if (u < minU)
+      u = 0.f;
+   else if (u > maxU)
+      u = 1.f;
+   else
+      u = (u - minU) * 2.f;
+
+
+   const float v = static_cast<float>(verticalIndex) / verticalPointCount;
+   textureCoordinates.emplace_back(u, v);
 }
