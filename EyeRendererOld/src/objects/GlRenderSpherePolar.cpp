@@ -57,7 +57,7 @@ void GlRenderSpherePolar::PopulateTriangles(const unsigned int horizontalPointCo
    for (int i=0; i<verticalPointCount-2; ++i)
    {
       const unsigned int verticalIndex = i * (horizontalPointCount + 1) + 1;
-      for (int j=0; j<horizontalPointCount; ++j)
+      for (int j=0; j<=horizontalPointCount; ++j)
       {
          const unsigned int indexP1 = j + verticalIndex;
          const unsigned int indexP2 = indexP1 + 1;
