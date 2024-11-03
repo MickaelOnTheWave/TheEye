@@ -65,11 +65,11 @@ void GlRenderSpherePolar::PopulateTriangles(const unsigned int horizontalPointCo
          const unsigned int indexP4 = indexP3 + 1;
          triangles.emplace_back(indexP1, indexP2, indexP4);
          triangles.emplace_back(indexP1, indexP4, indexP3);
-         //triangles.emplace_back(indexP1, indexP4, );
       }
    }
 
    const unsigned int finalIndex = points.size()-1;
    const unsigned int startIndex = finalIndex - horizontalPointCount-1;
    for (int i = startIndex; i < finalIndex; ++i)
+      triangles.emplace_back(finalIndex, i, i+1);
 }
