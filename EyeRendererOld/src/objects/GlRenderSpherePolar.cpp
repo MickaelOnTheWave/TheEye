@@ -2,24 +2,32 @@
 
 #include <cmath>
 
-void GlRenderSpherePolar::PopulateGeometry(const unsigned int subdivisions)
+void GlRenderSpherePolar::SetTextureProjection(const TextureMap mapping)
 {
-   const unsigned int horizontalPointCount = pow(2, subdivisions + 2);
-   const unsigned int verticalPointCount = pow(2, subdivisions + 1);
-
-   PopulateCoordinates(horizontalPointCount, verticalPointCount);
-   PopulateTriangles(horizontalPointCount, verticalPointCount);
+   textureMapping = mapping;
 }
 
-void GlRenderSpherePolar::PopulateCoordinates(const unsigned int horizontalPointCount, const unsigned int verticalPointCount)
+void GlRenderSpherePolar::PopulateGeometry(const unsigned int subdivisions)
+{
+   horizontalPointCount = pow(2, subdivisions + 2);
+   verticalPointCount = pow(2, subdivisions + 1);
+
+   PopulateCoordinates();
+   PopulateTriangles();
+}
+
+void GlRenderSpherePolar::PopulateCoordinates()
 {
    const GLfloat radius = 1.f;
    const GLfloat horizontalAnglePerSlice = 2 * M_PI / static_cast<GLfloat>(horizontalPointCount);
    const GLfloat verticalAnglePerSlice = M_PI / static_cast<GLfloat>(verticalPointCount);
 
+   SphereTextureMapping* textureMappingAlgorithm = CreateMappingAlgorithm();
+
    points.emplace_back(0.f, radius, 0.f);
    colors.emplace_back(1.f, 1.f, 1.f);
-   textureCoordinates.emplace_back(0.5f, 0.f);
+
+   textureMappingAlgorithm->MapTop();
 
    for (int i=1; i<verticalPointCount; ++i)
    {
@@ -27,8 +35,6 @@ void GlRenderSpherePolar::PopulateCoordinates(const unsigned int horizontalPoint
 
       const float y = radius * cos(verticalAngle);
       const float plane = radius * sin(verticalAngle);
-
-      const float v = static_cast<float>(i) / verticalPointCount;
 
       for (int j=0; j<=horizontalPointCount; ++j)
       {
@@ -39,17 +45,16 @@ void GlRenderSpherePolar::PopulateCoordinates(const unsigned int horizontalPoint
 
          colors.emplace_back(1.f, 1.f, 1.f);
 
-         const float u = static_cast<float>(j) / horizontalPointCount;
-         textureCoordinates.emplace_back(u, v);
+         textureMappingAlgorithm->Map(i, j);
       }
    }
 
    points.emplace_back(0.f, -radius, 0.f);
    colors.emplace_back(1.f, 1.f, 1.f);
-   textureCoordinates.emplace_back(0.5f, 1.f);
+   textureMappingAlgorithm->MapBottom();
 }
 
-void GlRenderSpherePolar::PopulateTriangles(const unsigned int horizontalPointCount, const unsigned int verticalPointCount)
+void GlRenderSpherePolar::PopulateTriangles()
 {
    for (int j=0; j<horizontalPointCount; ++j)
       triangles.emplace_back(0, j+2, j+1);
@@ -72,4 +77,11 @@ void GlRenderSpherePolar::PopulateTriangles(const unsigned int horizontalPointCo
    const unsigned int startIndex = finalIndex - horizontalPointCount-1;
    for (int i = startIndex; i < finalIndex; ++i)
       triangles.emplace_back(finalIndex, i, i+1);
+}
+
+SphereTextureMapping *GlRenderSpherePolar::CreateMappingAlgorithm()
+{
+   if (textureMapping == TextureMap::FullWrap)
+      return new FullWrapSphereMapping(textureCoordinates, horizontalPointCount, verticalPointCount);
+   return nullptr;
 }
