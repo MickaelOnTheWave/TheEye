@@ -1,4 +1,3 @@
-#include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -69,8 +68,8 @@ static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 
 void populateScene(GlRenderer& renderer)
 {
-   const std::pair<std::string, int> faceTexture = {"data/awesomeface.png", GL_RGBA};
-   const std::pair<std::string, int> wallTexture = {"data/wall.jpg", GL_RGB};
+   const GlRenderObject::Texture faceTexture = {"data/awesomeface.png", GL_RGBA};
+   const GlRenderObject::Texture wallTexture = {"data/wall.jpg", GL_RGB};
    const GlRenderCube::TextureVec textures1 = {
       {"data/texture-wood.jpeg", GL_RGB}, faceTexture
    };

@@ -1,0 +1,3 @@
+[submodule "EyeRendererOld/RenderLib"]
+	path = EyeRendererOld/RenderLib
+	url = git@github.com:MickaelOnTheWave/RenderLib.git
