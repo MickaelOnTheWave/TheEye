@@ -66,7 +66,7 @@ add_executable(${PROJECT_NAME} ${PROJ_SRC})
 ###
 ### Linking to the project
 ###
-target_link_libraries(${PROJECT_NAME} Renderer ${PROJ_LINK_LIBS})
+target_link_libraries(${PROJECT_NAME} RenderLib ${PROJ_LINK_LIBS})
 
 configure_file(${CMAKE_SOURCE_DIR}/data/eye-blue.jpg   ${CMAKE_CURRENT_BINARY_DIR}/data/eye-blue.jpg COPYONLY)
 
