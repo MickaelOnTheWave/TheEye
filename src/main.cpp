@@ -3,28 +3,30 @@
 
 #include "GlRenderer.h"
 #include "cameras/OrbitCamera.h"
-#include "objects/GlRenderSpherePolar.h"
+
+#include "Eye.h"
 
 OrbitCamera camera(0, 0, 0);
-double windowXCenter;
-double windowYCenter;
 
-double previousXpos;
-double previousYpos;
+const int windowSizeX = 1024;
+const int windowSizeY = 768;
+const double windowXCenter = windowSizeX / 2.0;
+const double windowYCenter = windowSizeY / 2.0;
 
-unsigned int subdivLevel = 1;
 GlRenderer* renderer = nullptr;
+Eye eye;
 
-void PopulateSphereScene()
+Vector3 MapToGlSpace(double xPos, double yPos)
 {
-   const GlRenderObject::Texture wallTexture = {"data/eye-blue.jpg", GL_RGB};
-   auto sphere1 = new GlRenderSpherePolar();
-   sphere1->SetTextureProjection(GlRenderSpherePolar::TextureMap::HalfWrap);
-   sphere1->Initialize(subdivLevel, {wallTexture});
+   const float xFactor = 10.f;
+   const float x = xFactor * (xPos - windowXCenter) / windowXCenter;
 
-   auto transform1 = Matrix4x4::Scale(0.5);
-   auto instance = new GlRenderedInstance(sphere1, transform1);
-   renderer->AddRenderObject(instance);
+   const float yFactor = 10.f;
+   const float y = yFactor * (yPos - windowYCenter) / windowYCenter;
+
+   const float z = 5.f;
+
+   return Vector3(x, y, z);
 }
 
 static void keyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -33,33 +35,12 @@ static void keyPressCallback(GLFWwindow* window, int key, int scancode, int acti
    {
       if (key == GLFW_KEY_ESCAPE)
          glfwSetWindowShouldClose(window, GLFW_TRUE);
-      else if (key == GLFW_KEY_KP_ADD)
-      {
-         ++subdivLevel;
-         renderer->ClearScene();
-         PopulateSphereScene();
-      }
-      else if (key == GLFW_KEY_KP_SUBTRACT)
-      {
-         if (subdivLevel > 0)
-            --subdivLevel;
-         renderer->ClearScene();
-         PopulateSphereScene();
-      }
    }
 }
 
 static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 {
-   const double deltaX = xpos - previousXpos;
-   const double deltaY = ypos - previousYpos;
-
-   camera.RotateInX(deltaY);
-   camera.RotateInY(deltaX);
-
-   previousXpos = xpos;
-   previousYpos = ypos;
-
+   eye.LookAt(MapToGlSpace(xpos, ypos));
    //std::cout << deltaX << std::endl;
 }
 
@@ -68,11 +49,6 @@ int main()
    GLFWwindow* window;
 
    if (!glfwInit()) return -1;
-
-   const int windowSizeX = 1024;
-   const int windowSizeY = 768;
-   windowXCenter = windowSizeX / 2.0;
-   windowYCenter = windowSizeY / 2.0;
 
    window = glfwCreateWindow(windowSizeX, windowSizeY, "Eye Renderer", nullptr, nullptr);
    if (!window)
@@ -87,10 +63,12 @@ int main()
 
    gladLoadGL(glfwGetProcAddress);
 
+   glViewport(0, 0, windowSizeX, windowSizeY);
+
    renderer = new GlRenderer(camera);
    renderer->SetClearColor(0.0f, 0.0f, 0.0f);
 
-   PopulateSphereScene();
+   eye.Initialize(renderer);
 
    renderer->PrepareRendering();
 
