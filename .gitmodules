@@ -1,3 +1,6 @@
 [submodule "RenderLib"]
 	path = RenderLib
 	url = git@github.com:MickaelOnTheWave/RenderLib.git
+[submodule "FaceDetectionLib"]
+	path = FaceDetectionLib
+	url = git@github.com:MickaelOnTheWave/ImageProcessingToolsLib.git

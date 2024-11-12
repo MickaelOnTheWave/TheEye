@@ -14,7 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
 add_subdirectory(RenderLib)
-#add_subdirectory(FaceLiveDetector)
+add_subdirectory(FaceDetectionLib)
 
 ###
 ### Options
@@ -66,7 +66,7 @@ add_executable(${PROJECT_NAME} ${PROJ_SRC})
 ###
 ### Linking to the project
 ###
-target_link_libraries(${PROJECT_NAME} RenderLib ${PROJ_LINK_LIBS})
+target_link_libraries(${PROJECT_NAME} RenderLib ImageProcessingToolsLib ${PROJ_LINK_LIBS})
 
 configure_file(${CMAKE_SOURCE_DIR}/data/eye-blue.jpg   ${CMAKE_CURRENT_BINARY_DIR}/data/eye-blue.jpg COPYONLY)
 

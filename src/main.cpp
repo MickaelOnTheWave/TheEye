@@ -5,6 +5,8 @@
 #include "cameras/OrbitCamera.h"
 
 #include "Eye.h"
+//#include "FaceLiveDetector.h"
+#include "FaceDetector.h"
 
 OrbitCamera camera(0, 0, 0);
 
@@ -44,6 +46,12 @@ static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
    //std::cout << deltaX << std::endl;
 }
 
+Vector3 DetectFacePosition()
+{
+   Vector3 facePosition;
+   return facePosition;
+}
+
 int main()
 {
    GLFWwindow* window;
@@ -65,6 +73,7 @@ int main()
 
    glViewport(0, 0, windowSizeX, windowSizeY);
 
+   FaceLiveDetector faceDetector("haarcascade_frontalface_default.xml");
    renderer = new GlRenderer(camera);
    renderer->SetClearColor(0.0f, 0.0f, 0.0f);
 
@@ -75,7 +84,11 @@ int main()
    while (!glfwWindowShouldClose(window))
    {
       glfwPollEvents();
+
+      //const FaceDataVec faceData = faceDetector.Detect();
+      //eye.LookAt(facePosition);
       renderer->Render();
+
       glfwSwapBuffers(window);
    }
 
