@@ -13,8 +13,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
+find_package( OpenCV REQUIRED )
+
 add_subdirectory(RenderLib)
 add_subdirectory(FaceDetectionLib)
+
+include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 ###
 ### Options
@@ -69,6 +73,7 @@ add_executable(${PROJECT_NAME} ${PROJ_SRC})
 target_link_libraries(${PROJECT_NAME} RenderLib ImageProcessingToolsLib ${PROJ_LINK_LIBS})
 
 configure_file(${CMAKE_SOURCE_DIR}/data/eye-blue.jpg   ${CMAKE_CURRENT_BINARY_DIR}/data/eye-blue.jpg COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/data/haarcascade_frontalface_default.xml   ${CMAKE_CURRENT_BINARY_DIR}/data/haarcascade_frontalface_default.xml COPYONLY)
 
 
 add_custom_target(Other SOURCES

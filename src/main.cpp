@@ -5,8 +5,7 @@
 #include "cameras/OrbitCamera.h"
 
 #include "Eye.h"
-//#include "FaceLiveDetector.h"
-#include "FaceDetector.h"
+#include "FaceLiveDetector.h"
 
 OrbitCamera camera(0, 0, 0);
 
@@ -73,7 +72,11 @@ int main()
 
    glViewport(0, 0, windowSizeX, windowSizeY);
 
-   FaceLiveDetector faceDetector("haarcascade_frontalface_default.xml");
+   FaceLiveDetector faceDetector;
+   bool ok = faceDetector.Initialize("data/haarcascade_frontalface_default.xml");
+   //if (!ok)
+   //   return 1;
+
    renderer = new GlRenderer(camera);
    renderer->SetClearColor(0.0f, 0.0f, 0.0f);
 
