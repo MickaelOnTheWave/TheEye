@@ -17,6 +17,16 @@ const double windowYCenter = windowSizeY / 2.0;
 GlRenderer* renderer = nullptr;
 Eye eye;
 
+struct EyeCalibrationData
+{
+   float offsetX = 0.f;
+   float offsetY = 0.f;
+   float factorX = 1.f;
+   float factorY = 1.f;
+};
+
+EyeCalibrationData eyeCalibration;
+
 Vector3 MapToGlSpace(double xPos, double yPos)
 {
    const float xFactor = 10.f;
@@ -30,6 +40,29 @@ Vector3 MapToGlSpace(double xPos, double yPos)
    return Vector3(x, y, z);
 }
 
+void SetCalibration()
+{
+   eyeCalibration.offsetX = 0.f;
+   eyeCalibration.offsetY = 0.f;
+   eyeCalibration.factorX = 1.f;
+   eyeCalibration.factorY = 1.f;
+}
+
+Vector3 ConvertTo3dPosition(const FaceRect& faceData, const int videoWidth, const int videoHeight)
+{
+   const float faceCenterX = faceData.x + (faceData.width / 2.f);
+   const float faceCenterY = faceData.y + (faceData.height / 2.f);
+
+   const float videoXCenter = videoWidth / 2.f;
+   const float x = -eyeCalibration.factorX * (faceCenterX + eyeCalibration.factorX - videoXCenter) / videoXCenter;
+
+   const float videoYCenter = videoHeight / 2.f;
+   const float y = eyeCalibration.factorY * (faceCenterY + eyeCalibration.factorY- videoYCenter) / videoYCenter;
+
+   const float z = 5.f;
+   return Vector3(x, y, z);
+}
+
 static void keyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
    if (action == GLFW_PRESS)
@@ -37,12 +70,6 @@ static void keyPressCallback(GLFWwindow* window, int key, int scancode, int acti
       if (key == GLFW_KEY_ESCAPE)
          glfwSetWindowShouldClose(window, GLFW_TRUE);
    }
-}
-
-static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
-{
-   eye.LookAt(MapToGlSpace(xpos, ypos));
-   //std::cout << deltaX << std::endl;
 }
 
 Vector3 DetectFacePosition()
@@ -65,7 +92,6 @@ int main()
    }
 
    glfwSetKeyCallback(window, keyPressCallback);
-   glfwSetCursorPosCallback(window, mouseMoveCallback);
    glfwMakeContextCurrent(window);
 
    gladLoadGL(glfwGetProcAddress);
@@ -74,8 +100,8 @@ int main()
 
    FaceLiveDetector faceDetector;
    bool ok = faceDetector.Initialize("data/haarcascade_frontalface_default.xml");
-   //if (!ok)
-   //   return 1;
+   if (!ok)
+      return 1;
 
    renderer = new GlRenderer(camera);
    renderer->SetClearColor(0.0f, 0.0f, 0.0f);
@@ -88,8 +114,15 @@ int main()
    {
       glfwPollEvents();
 
-      //const FaceDataVec faceData = faceDetector.Detect();
-      //eye.LookAt(facePosition);
+      const FaceDataVec faceData = faceDetector.Detect();
+
+      if (!faceData.empty())
+      {
+         const Vector3 facePosition = ConvertTo3dPosition(faceData.front(),
+                                                          faceDetector.GetVideoWidth(),
+                                                          faceDetector.GetVideoHeight());
+         eye.LookAt(facePosition);
+      }
       renderer->Render();
 
       glfwSwapBuffers(window);
