@@ -123,6 +123,9 @@ int main()
                                                           faceDetector.GetVideoHeight());
          eye.LookAt(facePosition);
       }
+      else
+         eye.LookAt(Vector3(0.f, -1.f, 0.f));
+
       renderer->Render();
 
       glfwSwapBuffers(window);
