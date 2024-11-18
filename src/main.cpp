@@ -7,10 +7,16 @@
 #include "Eye.h"
 #include "FaceLiveDetector.h"
 
+// TODO : Add plane rendering (eyelid)
+// TODO : Add animation to eyelid/Renderer
+// TODO : Add matrix skinning to eyelid
+// TODO : Add screenshot from screen
+// TODO : Add texture mapping to conform to geometry
+
 OrbitCamera camera(0, 0, 0);
 
-const int windowSizeX = 1024;
-const int windowSizeY = 768;
+const int windowSizeX = 1920;
+const int windowSizeY = 1080;
 const double windowXCenter = windowSizeX / 2.0;
 const double windowYCenter = windowSizeY / 2.0;
 
@@ -84,7 +90,7 @@ int main()
 
    if (!glfwInit()) return -1;
 
-   window = glfwCreateWindow(windowSizeX, windowSizeY, "Eye Renderer", nullptr, nullptr);
+   window = glfwCreateWindow(windowSizeX, windowSizeY, "Eye Renderer", glfwGetPrimaryMonitor(), nullptr);
    if (!window)
    {
       glfwTerminate();
