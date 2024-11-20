@@ -72,9 +72,7 @@ add_executable(${PROJECT_NAME} ${PROJ_SRC})
 ###
 target_link_libraries(${PROJECT_NAME} RenderLib ImageProcessingToolsLib ${PROJ_LINK_LIBS})
 
-configure_file(${CMAKE_SOURCE_DIR}/data/eye-blue.jpg   ${CMAKE_CURRENT_BINARY_DIR}/data/eye-blue.jpg COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/data/haarcascade_frontalface_default.xml   ${CMAKE_CURRENT_BINARY_DIR}/data/haarcascade_frontalface_default.xml COPYONLY)
-
+file(COPY "${CMAKE_SOURCE_DIR}/data" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_custom_target(Other SOURCES
     VERSION LICENSE
