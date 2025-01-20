@@ -13,7 +13,7 @@
 // TODO : Add screenshot from screen
 // TODO : Add texture mapping to conform to geometry
 
-OrbitCamera camera(0, 0, 0);
+OrbitCamera camera(Vector3(0, 0, 0));
 
 const int windowSizeX = 1920;
 const int windowSizeY = 1080;
@@ -109,7 +109,7 @@ int main()
    if (!ok)
       return 1;
 
-   renderer = new GlRenderer(camera);
+   renderer = new GlRenderer(&camera);
    renderer->SetClearColor(0.0f, 0.0f, 0.0f);
 
    eye.Initialize(renderer);

@@ -6,11 +6,19 @@
 
 void Eye::Initialize(GlRenderer *renderer)
 {
-   const unsigned int subdivisions = 4;
-   const GlRenderObject::Texture wallTexture = {"data/eye-blue.jpg", GL_RGB};
-   auto eyeSphere = new GlRenderSpherePolar();
+   const unsigned int eyeTextureId = renderer->AddTexture("data/eye-blue.jpg", GL_RGB);
+   const unsigned int whiteTextureId = renderer->AddTexture(Vector3(1,1,1));
+   Material* eyeMaterial = new Material("eye");
+   eyeMaterial->diffuseTextureId = eyeTextureId;
+   eyeMaterial->specularTextureId = whiteTextureId;
+   eyeMaterial->shininess = 20.f;
+   renderer->AddMaterial(eyeMaterial);
+
+   auto eyeSphere = new GlRenderSpherePolar(eyeMaterial);
    eyeSphere->SetTextureProjection(GlRenderSpherePolar::TextureMap::HalfWrap);
-   eyeSphere->Initialize(subdivisions, {wallTexture});
+
+   const unsigned int subdivisions = 4;
+   eyeSphere->Initialize(subdivisions);
 
    initialTransform = Matrix4x4::Scale(0.5f, 0.5f, -0.5f);
    renderInstance = new GlRenderedInstance(eyeSphere, initialTransform);
