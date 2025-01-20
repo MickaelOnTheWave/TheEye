@@ -5,7 +5,7 @@
 #include "cameras/OrbitCamera.h"
 
 #include "Eye.h"
-#include "FaceLiveDetector.h"
+#include "EyeFaceAnalyzer.h"
 
 // TODO : Add plane rendering (eyelid)
 // TODO : Add animation to eyelid/Renderer
@@ -23,16 +23,6 @@ const double windowYCenter = windowSizeY / 2.0;
 GlRenderer* renderer = nullptr;
 Eye eye;
 
-struct EyeCalibrationData
-{
-   float offsetX = 0.f;
-   float offsetY = 0.f;
-   float factorX = 1.f;
-   float factorY = 1.f;
-};
-
-EyeCalibrationData eyeCalibration;
-
 Vector3 MapToGlSpace(double xPos, double yPos)
 {
    const float xFactor = 10.f;
@@ -43,29 +33,6 @@ Vector3 MapToGlSpace(double xPos, double yPos)
 
    const float z = 5.f;
 
-   return Vector3(x, y, z);
-}
-
-void SetCalibration()
-{
-   eyeCalibration.offsetX = 0.f;
-   eyeCalibration.offsetY = 0.f;
-   eyeCalibration.factorX = 1.f;
-   eyeCalibration.factorY = 1.f;
-}
-
-Vector3 ConvertTo3dPosition(const FaceRect& faceData, const int videoWidth, const int videoHeight)
-{
-   const float faceCenterX = faceData.x + (faceData.width / 2.f);
-   const float faceCenterY = faceData.y + (faceData.height / 2.f);
-
-   const float videoXCenter = videoWidth / 2.f;
-   const float x = -eyeCalibration.factorX * (faceCenterX + eyeCalibration.factorX - videoXCenter) / videoXCenter;
-
-   const float videoYCenter = videoHeight / 2.f;
-   const float y = eyeCalibration.factorY * (faceCenterY + eyeCalibration.factorY- videoYCenter) / videoYCenter;
-
-   const float z = 5.f;
    return Vector3(x, y, z);
 }
 
@@ -104,42 +71,41 @@ int main()
 
    glViewport(0, 0, windowSizeX, windowSizeY);
 
-   FaceLiveDetector faceDetector;
-   bool ok = faceDetector.Initialize("data/haarcascade_frontalface_default.xml");
-   if (!ok)
-      return 1;
-
-   renderer = new GlRenderer(&camera);
-   renderer->SetClearColor(0.0f, 0.0f, 0.0f);
-
-   eye.Initialize(renderer);
-
-   renderer->PrepareRendering();
-
-   while (!glfwWindowShouldClose(window))
+   EyeFaceAnalyzer faceAnalyzer;
+   const int returnCode = faceAnalyzer.Initialize();
+   if (returnCode == EyeFaceAnalyzer::OK)
    {
-      glfwPollEvents();
 
-      const FaceDataVec faceData = faceDetector.Detect();
+      renderer = new GlRenderer(&camera);
+      renderer->SetClearColor(0.0f, 0.0f, 0.0f);
 
-      if (!faceData.empty())
+      eye.Initialize(renderer);
+
+      renderer->PrepareRendering();
+
+      while (!glfwWindowShouldClose(window))
       {
-         const Vector3 facePosition = ConvertTo3dPosition(faceData.front(),
-                                                          faceDetector.GetVideoWidth(),
-                                                          faceDetector.GetVideoHeight());
-         eye.LookAt(facePosition);
+         glfwPollEvents();
+
+         std::optional<Vector3> facePosition = faceAnalyzer.Detect();
+
+         if (facePosition)
+            eye.LookAt(facePosition.value());
+         else
+            eye.LookAt(Vector3(0.f, -1.f, 0.f));
+
+         renderer->Render();
+
+         glfwSwapBuffers(window);
       }
-      else
-         eye.LookAt(Vector3(0.f, -1.f, 0.f));
 
-      renderer->Render();
-
-      glfwSwapBuffers(window);
    }
+   else
+      std::cout << "Error initializing haarcascade. Check if cascade file exists." << std::endl;
 
    // Clean up
    delete renderer;
    glfwTerminate();
-   return 0;
+   return returnCode;
 }
 
