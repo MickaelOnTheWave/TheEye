@@ -1,6 +1,9 @@
 #ifndef EYE_H
 #define EYE_H
 
+#include <optional>
+
+#include "Eye3dModel.h"
 #include "GlRenderer.h"
 #include "math/Vector3.h"
 
@@ -11,12 +14,10 @@ public:
 
    void Initialize(GlRenderer* renderer);
 
-   void LookAt(const Vector3& target);
+   void UpdateFaceData(std::optional<Vector3> facePosition);
 
 private:
-   GlRenderedInstance* renderInstance = nullptr;
-
-   Matrix4x4 initialTransform;
+   Eye3dModel model;
 };
 
 #endif // EYE_H
