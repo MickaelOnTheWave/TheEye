@@ -18,6 +18,7 @@ public:
 
 private:
    Eye3dModel model;
+   bool eyeClosed = true;
 };
 
 #endif // EYE_H

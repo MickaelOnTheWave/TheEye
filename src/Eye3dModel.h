@@ -12,11 +12,25 @@ public:
    void Initialize(GlRenderer* renderer);
 
    void LookAt(const Vector3& target);
+   void Open();
+   void Close();
 
 private:
-   GlRenderedInstance* renderInstance = nullptr;
-   Matrix4x4 initialTransform;
+   Material* CreateEyeMaterial(GlRenderer *renderer) const;
+   Material* CreateSkinMaterial(GlRenderer *renderer) const;
 
+   void UpdateLidTransform();
+
+   GlRenderedInstance* eyeBall = nullptr;
+   GlRenderedInstance* upperLid = nullptr;
+   GlRenderedInstance* lowerLid = nullptr;
+
+   Matrix4x4 initialEyeballTransform;
+   Matrix4x4 initialUpperLidTransform;
+   Matrix4x4 initialLowerLidTransform;
+   unsigned int whiteTextureId;
+   float upperLidAngle;
+   float lowerLidAngle;
 };
 
 #endif // EYE3DMODEL_H
