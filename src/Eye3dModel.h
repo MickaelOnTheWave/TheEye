@@ -12,8 +12,8 @@ public:
    void Initialize(GlRenderer* renderer);
 
    void LookAt(const Vector3& target);
-   void Open();
-   void Close();
+   void Open(const float t);
+   void Close(const float t);
 
 private:
    Material* CreateEyeMaterial(GlRenderer *renderer) const;

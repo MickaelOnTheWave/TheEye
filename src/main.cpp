@@ -7,8 +7,6 @@
 #include "Eye.h"
 #include "EyeFaceAnalyzer.h"
 
-// TODO : Add plane rendering (eyelid)
-// TODO : Add animation to eyelid/Renderer
 // TODO : Add matrix skinning to eyelid
 // TODO : Add screenshot from screen
 // TODO : Add texture mapping to conform to geometry
@@ -64,12 +62,14 @@ int main()
       Eye eye;
       eye.Initialize(renderer);
 
+      const float deltaT = 0.3f;
+
       while (!glfwWindowShouldClose(window))
       {
          glfwPollEvents();
 
          std::optional<Vector3> facePosition = faceAnalyzer.Detect();
-         eye.UpdateFaceData(facePosition);
+         eye.Update(facePosition, deltaT);
 
          renderer->Render();
 

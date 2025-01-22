@@ -14,11 +14,28 @@ public:
 
    void Initialize(GlRenderer* renderer);
 
-   void UpdateFaceData(std::optional<Vector3> facePosition);
+   void Update(std::optional<Vector3> facePosition, const float deltaT);
 
 private:
+   void UpdateOpening(const float animationT);
+   void UpdateClosing(const float animationT);
+
+   std::string GetStateDescription() const;
+
    Eye3dModel model;
-   bool eyeClosed = true;
+
+   enum class EyeState
+   {
+      CLOSED,
+      CLOSING,
+      OPEN,
+      OPENING
+   };
+
+   float tAnimation;
+
+   EyeState eyeState;
+
 };
 
 #endif // EYE_H

@@ -6,6 +6,14 @@
 #include "objects/GlRenderSphereArc.h"
 #include "objects/GlRenderSpherePolar.h"
 
+namespace
+{
+   const float upperLidOpenAngle = 0.75f;
+   const float upperLidClosedAngle = 0.5f;
+   const float lowerLidOpenAngle = -0.75f;
+   const float lowerLidClosedAngle = -0.5f;
+}
+
 void Eye3dModel::Initialize(GlRenderer *renderer)
 {
    whiteTextureId = renderer->AddTexture(Vector3(1,1,1));
@@ -54,17 +62,29 @@ void Eye3dModel::LookAt(const Vector3 &target)
    eyeBall->SetTransform(initialEyeballTransform * yRotation * xRotation);
 }
 
-void Eye3dModel::Open()
+void Eye3dModel::Open(const float t)
 {
-   upperLidAngle = M_PI * 0.75f;
-   lowerLidAngle = M_PI * -0.75f;
+   const float upperLidDelta = upperLidOpenAngle - upperLidClosedAngle;
+   const float upperLidFactor = upperLidClosedAngle + upperLidDelta * t;
+
+   const float lowerLidDelta = lowerLidOpenAngle - lowerLidClosedAngle;
+   const float lowerLidFactor = lowerLidClosedAngle + lowerLidDelta * t;
+
+   upperLidAngle = M_PI * upperLidFactor;
+   lowerLidAngle = M_PI * lowerLidFactor;
    UpdateLidTransform();
 }
 
-void Eye3dModel::Close()
+void Eye3dModel::Close(const float t)
 {
-   upperLidAngle = M_PI * 0.5f;
-   lowerLidAngle = M_PI * -0.5f;
+   const float upperLidDelta = upperLidClosedAngle - upperLidOpenAngle;
+   const float upperLidFactor = upperLidOpenAngle + upperLidDelta * t;
+
+   const float lowerLidDelta = lowerLidClosedAngle - lowerLidOpenAngle;
+   const float lowerLidFactor = lowerLidOpenAngle + lowerLidDelta * t;
+
+   upperLidAngle = M_PI * upperLidFactor;
+   lowerLidAngle = M_PI * lowerLidFactor;
    UpdateLidTransform();
 }
 
