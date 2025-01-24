@@ -16,25 +16,27 @@ namespace
 
 void Eye3dModel::Initialize(GlRenderer *renderer)
 {
+   const unsigned int sphereSubdivisions = 4;
+
    whiteTextureId = renderer->AddTexture(Vector3(1,1,1));
    Material* eyeMaterial = CreateEyeMaterial(renderer);
    Material* skinMaterial = CreateSkinMaterial(renderer);
 
-   auto eyeSphere = new GlRenderSpherePolar(eyeMaterial);
-   eyeSphere->SetTextureProjection(GlRenderSpherePolar::TextureMap::HalfWrap);
-
-   const unsigned int subdivisions = 4;
-   eyeSphere->Initialize(subdivisions);
+   auto eyeSphere = new GlRenderSpherePolar(eyeMaterial, sphereSubdivisions, GlRenderSpherePolar::TextureMap::HalfWrap);
+   eyeSphere->Initialize();
 
    initialEyeballTransform = Matrix4x4::Scale(0.5f, 0.5f, -0.5f);
    eyeBall = new GlRenderedInstance(eyeSphere, initialEyeballTransform);
 
-   auto eyePlane = new GlRenderPlane(skinMaterial);
+   const float textureScale = 2.f;
+   auto eyePlane = new GlRenderPlane(skinMaterial, textureScale);
+   eyePlane->Initialize();
+
    Matrix4x4 faceTransform = Matrix4x4::Scale(2.f) * Matrix4x4::Translation(Vector3(0, 0, -0.2f));
    auto faceSkin = new GlRenderedInstance(eyePlane, faceTransform);
 
-   auto eyeLid = new GlRenderSphereArc(M_PI, skinMaterial);
-   eyeLid->Initialize(subdivisions);
+   auto eyeLid = new GlRenderSphereArc(M_PI, skinMaterial, sphereSubdivisions, GlRenderSpherePolar::TextureMap::HalfWrap);
+   eyeLid->Initialize();
 
    initialUpperLidTransform = Matrix4x4::Scale(0.6f) *  Matrix4x4::RotationY(M_PI * 0.5f);
    upperLid = new GlRenderedInstance(eyeLid, initialUpperLidTransform);
