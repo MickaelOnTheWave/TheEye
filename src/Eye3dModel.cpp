@@ -92,7 +92,8 @@ void Eye3dModel::Close(const float t)
 
 Material *Eye3dModel::CreateEyeMaterial(GlRenderer *renderer) const
 {
-   const unsigned int eyeTextureId = renderer->AddTexture("data/eye-blue.jpg", GL_RGB);
+   const int channelCount = 3;
+   const unsigned int eyeTextureId = renderer->AddTexture("data/eye-blue.jpg", channelCount);
    Material* eyeMaterial = new Material("eye");
    eyeMaterial->diffuseTextureId = eyeTextureId;
    eyeMaterial->specularTextureId = whiteTextureId;
@@ -103,7 +104,8 @@ Material *Eye3dModel::CreateEyeMaterial(GlRenderer *renderer) const
 
 Material *Eye3dModel::CreateSkinMaterial(GlRenderer *renderer) const
 {
-   const unsigned int textureId = renderer->AddTexture("data/skin.jpeg", GL_RGB);
+   const int channelCount = 4;
+   const unsigned int textureId = renderer->AddTexture("data/skin.jpeg", channelCount);
    auto material = new Material("skin");
    material->diffuseTextureId = textureId;
    material->specularTextureId = whiteTextureId;
