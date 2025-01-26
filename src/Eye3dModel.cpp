@@ -22,20 +22,22 @@ void Eye3dModel::Initialize(GlRenderer *renderer)
    Material* eyeMaterial = CreateEyeMaterial(renderer);
    Material* skinMaterial = CreateSkinMaterial(renderer);
 
-   auto eyeSphere = new GlRenderSpherePolar(eyeMaterial, sphereSubdivisions, GlRenderSpherePolar::TextureMap::HalfWrap);
+   auto eyeSphere = new GlRenderSpherePolar(eyeMaterial, sphereSubdivisions,
+                                            GlRenderSpherePolar::TextureMap::HalfWrap);
    eyeSphere->Initialize();
 
    initialEyeballTransform = Matrix4x4::Scale(0.5f, 0.5f, -0.5f);
    eyeBall = new GlRenderedInstance(eyeSphere, initialEyeballTransform);
 
-   const float textureScale = -1.f;
+   const float textureScale = 1.f;
    auto eyePlane = new GlRenderPlane(skinMaterial, textureScale);
    eyePlane->Initialize();
 
    Matrix4x4 faceTransform = Matrix4x4::Scale(2.f) * Matrix4x4::Translation(Vector3(0, 0, -0.2f));
    auto faceSkin = new GlRenderedInstance(eyePlane, faceTransform);
 
-   auto eyeLid = new GlRenderSphereArc(M_PI, skinMaterial, sphereSubdivisions, GlRenderSpherePolar::TextureMap::HalfWrap);
+   auto eyeLid = new GlRenderSphereArc(M_PI, skinMaterial, sphereSubdivisions,
+                                       GlRenderSpherePolar::TextureMap::HalfPolarProjection);
    eyeLid->Initialize();
 
    const Matrix4x4 scale = Matrix4x4::Scale(0.51f);
