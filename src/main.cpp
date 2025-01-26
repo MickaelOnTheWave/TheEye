@@ -6,10 +6,13 @@
 
 #include "Eye.h"
 #include "EyeFaceAnalyzer.h"
+#include "LinuxScreenCapturer.h"
 
-// TODO : Add matrix skinning to eyelid
 // TODO : Add screenshot from screen
-// TODO : Add texture mapping to conform to geometry
+// TODO : Add procedural eye texture
+// TODO : Separate face detection in other thread
+// TODO : Optimize face detection (reuse previous data)
+// TODO : Try to use CUDA / GPU for face detection
 
 const int windowSizeX = 1920;
 const int windowSizeY = 1080;
@@ -36,6 +39,10 @@ int main()
    GLFWwindow* window;
 
    if (!glfwInit()) return -1;
+
+
+   LinuxScreenCapturer screenshotCapturer;
+   ImageData screenshot = screenshotCapturer.Capture();
 
    window = glfwCreateWindow(windowSizeX, windowSizeY, "Eye Renderer", glfwGetPrimaryMonitor(), nullptr);
    if (!window)
