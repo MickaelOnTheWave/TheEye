@@ -28,7 +28,7 @@ void Eye3dModel::Initialize(GlRenderer *renderer)
    initialEyeballTransform = Matrix4x4::Scale(0.5f, 0.5f, -0.5f);
    eyeBall = new GlRenderedInstance(eyeSphere, initialEyeballTransform);
 
-   const float textureScale = 2.f;
+   const float textureScale = -1.f;
    auto eyePlane = new GlRenderPlane(skinMaterial, textureScale);
    eyePlane->Initialize();
 
@@ -38,9 +38,11 @@ void Eye3dModel::Initialize(GlRenderer *renderer)
    auto eyeLid = new GlRenderSphereArc(M_PI, skinMaterial, sphereSubdivisions, GlRenderSpherePolar::TextureMap::HalfWrap);
    eyeLid->Initialize();
 
-   initialUpperLidTransform = Matrix4x4::Scale(0.6f) *  Matrix4x4::RotationY(M_PI * 0.5f);
+   const Matrix4x4 scale = Matrix4x4::Scale(0.51f);
+   const float eyeLidAngle = M_PI * 0.5f;
+   initialUpperLidTransform = scale *  Matrix4x4::RotationY(eyeLidAngle);
    upperLid = new GlRenderedInstance(eyeLid, initialUpperLidTransform);
-   initialLowerLidTransform = Matrix4x4::Scale(0.6f) *  Matrix4x4::RotationY(M_PI * 0.5f);
+   initialLowerLidTransform = scale *  Matrix4x4::RotationY(eyeLidAngle);
    lowerLid = new GlRenderedInstance(eyeLid, initialLowerLidTransform);
 
    renderer->AddRenderObject(eyeBall);
@@ -104,8 +106,8 @@ Material *Eye3dModel::CreateEyeMaterial(GlRenderer *renderer) const
 
 Material *Eye3dModel::CreateSkinMaterial(GlRenderer *renderer) const
 {
-   const int channelCount = 4;
-   const unsigned int textureId = renderer->AddTexture("data/skin.jpeg", channelCount);
+   const int channelCount = 3;
+   const unsigned int textureId = renderer->AddTexture("data/screenshot.png", channelCount);
    auto material = new Material("skin");
    material->diffuseTextureId = textureId;
    material->specularTextureId = whiteTextureId;
