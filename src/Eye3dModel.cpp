@@ -36,16 +36,24 @@ void Eye3dModel::Initialize(GlRenderer *renderer)
    Matrix4x4 faceTransform = Matrix4x4::Scale(2.f) * Matrix4x4::Translation(Vector3(0, 0, -0.2f));
    auto faceSkin = new GlRenderedInstance(eyePlane, faceTransform);
 
-   auto eyeLid = new GlRenderSphereArc(M_PI, skinMaterial, sphereSubdivisions,
-                                       GlRenderSpherePolar::TextureMap::HalfPolarProjection);
-   eyeLid->Initialize();
+   const float eyeLidScale = 0.51f;
+   auto eyeLidUp = new GlRenderSphereArc(M_PI, skinMaterial, sphereSubdivisions,
+                                       GlRenderSpherePolar::TextureMap::HalfPolarProjection,
+                                       eyeLidScale, -eyeLidScale);
+   eyeLidUp->Initialize();
 
-   const Matrix4x4 scale = Matrix4x4::Scale(0.51f);
+   auto eyeLidDown = new GlRenderSphereArc(M_PI, skinMaterial, sphereSubdivisions,
+                                         GlRenderSpherePolar::TextureMap::HalfPolarProjection,
+                                         eyeLidScale, eyeLidScale);
+   eyeLidDown->Initialize();
+
+
+   const Matrix4x4 scale = Matrix4x4::Scale(eyeLidScale);
    const float eyeLidAngle = M_PI * 0.5f;
    initialUpperLidTransform = scale *  Matrix4x4::RotationY(eyeLidAngle);
-   upperLid = new GlRenderedInstance(eyeLid, initialUpperLidTransform);
+   upperLid = new GlRenderedInstance(eyeLidUp, initialUpperLidTransform);
    initialLowerLidTransform = scale *  Matrix4x4::RotationY(eyeLidAngle);
-   lowerLid = new GlRenderedInstance(eyeLid, initialLowerLidTransform);
+   lowerLid = new GlRenderedInstance(eyeLidDown, initialLowerLidTransform);
 
    renderer->AddRenderObject(eyeBall);
    renderer->AddRenderObject(faceSkin);
