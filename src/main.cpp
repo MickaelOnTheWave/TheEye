@@ -8,7 +8,6 @@
 #include "EyeFaceAnalyzer.h"
 #include "LinuxScreenCapturer.h"
 
-// TODO : Screenshot : reinvert colors
 // TODO : Add procedural eye texture
 // TODO : Separate face detection in other thread
 // TODO : Optimize face detection (reuse previous data)

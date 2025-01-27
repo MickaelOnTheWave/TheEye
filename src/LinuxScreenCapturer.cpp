@@ -19,10 +19,6 @@ ImageData LinuxScreenCapturer::Capture()
 
    XImage* img = XGetImage(display, root, 0, 0 , screenshot.width, screenshot.height, AllPlanes, ZPixmap);
    screenshot.channels = img->bits_per_pixel / 8;
-   //BitsPerPixel = img->bits_per_pixel;
-   //Pixels.resize(screenshot.width * screenshot.height * 4);
-
-   //memcpy(&Pixels[0], img->data, Pixels.size());
 
    const unsigned int componentCount = screenshot.width * screenshot.height * screenshot.channels;
    screenshot.data = new unsigned char[componentCount * sizeof(unsigned char)];
