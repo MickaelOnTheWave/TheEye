@@ -9,7 +9,6 @@
 #include "LinuxScreenCapturer.h"
 
 // TODO : Add procedural eye texture
-// TODO : Separate face detection in other thread
 // TODO : Optimize face detection (reuse previous data)
 // TODO : Try to use CUDA / GPU for face detection
 
@@ -61,26 +60,47 @@ int main()
    auto renderer = new GlRenderer(&camera);
    renderer->SetClearColor(0.0f, 0.0f, 0.0f);
 
-   EyeFaceAnalyzer faceAnalyzer;
+   std::mutex faceMutex;
+   std::optional<Vector3> facePosition;
+   std::optional<Vector3> lastFacePosition;
+
+   EyeFaceAnalyzer faceAnalyzer(faceMutex, facePosition);
    const int returnCode = faceAnalyzer.Initialize();
    if (returnCode == EyeFaceAnalyzer::OK)
    {
+      faceAnalyzer.RunThreadedDetection();
+
       Eye eye;
       eye.Initialize(renderer, screenshot);
 
-      const float deltaT = 0.3f;
+      const float deltaT = 0.2f;
 
       while (!glfwWindowShouldClose(window))
       {
          glfwPollEvents();
 
-         std::optional<Vector3> facePosition = faceAnalyzer.Detect();
-         eye.Update(facePosition, deltaT);
+         std::optional<Vector3>* faceDataToUse = nullptr;
+         bool tookTheLock = false;
+         if (faceMutex.try_lock())
+         {
+            faceDataToUse = &facePosition;
+            tookTheLock = true;
+         }
+         else
+            faceDataToUse = &lastFacePosition;
+
+         eye.Update(*faceDataToUse, deltaT);
+
+         if (tookTheLock)
+            lastFacePosition = facePosition;
+         faceMutex.unlock();
 
          renderer->Render();
 
          glfwSwapBuffers(window);
       }
+
+      faceAnalyzer.StopThreadedDetection();
    }
    else
       std::cout << "Error initializing haarcascade. Check if cascade file exists." << std::endl;

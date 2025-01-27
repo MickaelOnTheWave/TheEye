@@ -2,6 +2,7 @@
 #define EYEFACEANALYZER_H
 
 #include <optional>
+#include <thread>
 
 #include "FaceLiveDetector.h"
 #include "math/Vector3.h"
@@ -9,9 +10,12 @@
 class EyeFaceAnalyzer
 {
 public:
-   EyeFaceAnalyzer();
+   EyeFaceAnalyzer(std::mutex& _faceMutex, std::optional<Vector3>& _facePosition);
 
    int Initialize();
+
+   void RunThreadedDetection();
+   void StopThreadedDetection();
 
    std::optional<Vector3> Detect();
 
@@ -19,6 +23,7 @@ public:
    static const int ERROR_WITH_CASCADE_FILE = 1;
 
 private:
+   void RunThreadedDetect();
    Vector3 ConvertTo3dPosition(const FaceRect& faceData, const int videoWidth, const int videoHeight) const;
 
    struct EyeCalibrationData
@@ -31,6 +36,11 @@ private:
 
    EyeCalibrationData eyeCalibration;
    FaceLiveDetector detector;
+
+   std::mutex& faceMutex;
+   std::optional<Vector3>& facePosition;
+   std::thread threadId;
+   bool keepRunning = true;
 };
 
 #endif // EYEFACEANALYZER_H

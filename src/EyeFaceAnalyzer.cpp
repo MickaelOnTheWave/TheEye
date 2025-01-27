@@ -1,6 +1,9 @@
 #include "EyeFaceAnalyzer.h"
 
-EyeFaceAnalyzer::EyeFaceAnalyzer() {}
+EyeFaceAnalyzer::EyeFaceAnalyzer(std::mutex& _faceMutex, std::optional<Vector3>& _facePosition)
+  : faceMutex(_faceMutex), facePosition(_facePosition)
+{
+}
 
 int EyeFaceAnalyzer::Initialize()
 {
@@ -8,6 +11,17 @@ int EyeFaceAnalyzer::Initialize()
    if (!ok)
       return ERROR_WITH_CASCADE_FILE;
    return OK;
+}
+
+void EyeFaceAnalyzer::RunThreadedDetection()
+{
+   threadId = std::thread(&EyeFaceAnalyzer::RunThreadedDetect, this);
+}
+
+void EyeFaceAnalyzer::StopThreadedDetection()
+{
+   keepRunning = false;
+   threadId.join();
 }
 
 std::optional<Vector3> EyeFaceAnalyzer::Detect()
@@ -22,6 +36,16 @@ std::optional<Vector3> EyeFaceAnalyzer::Detect()
       return facePosition;
    }
    return std::nullopt;
+}
+
+void EyeFaceAnalyzer::RunThreadedDetect()
+{
+   while (keepRunning)
+   {
+      faceMutex.lock();
+      facePosition = Detect();
+      faceMutex.unlock();
+   }
 }
 
 Vector3 EyeFaceAnalyzer::ConvertTo3dPosition(const FaceRect& faceData, const int videoWidth, const int videoHeight) const
