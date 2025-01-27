@@ -8,7 +8,7 @@
 #include "EyeFaceAnalyzer.h"
 #include "LinuxScreenCapturer.h"
 
-// TODO : Add screenshot from screen
+// TODO : Screenshot : reinvert colors
 // TODO : Add procedural eye texture
 // TODO : Separate face detection in other thread
 // TODO : Optimize face detection (reuse previous data)
@@ -42,7 +42,7 @@ int main()
 
 
    LinuxScreenCapturer screenshotCapturer;
-   ImageData screenshot = screenshotCapturer.Capture();
+   const ImageData screenshot = screenshotCapturer.Capture();
 
    window = glfwCreateWindow(windowSizeX, windowSizeY, "Eye Renderer", glfwGetPrimaryMonitor(), nullptr);
    if (!window)
@@ -67,7 +67,7 @@ int main()
    if (returnCode == EyeFaceAnalyzer::OK)
    {
       Eye eye;
-      eye.Initialize(renderer);
+      eye.Initialize(renderer, screenshot);
 
       const float deltaT = 0.3f;
 

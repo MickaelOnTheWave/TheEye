@@ -2,11 +2,11 @@
 
 //#include <iostream>
 
-void Eye::Initialize(GlRenderer *renderer)
+void Eye::Initialize(GlRenderer *renderer, const ImageData& screenshot)
 {
    eyeState = EyeState::CLOSED;
    renderer->SetRenderShader(GlRenderer::ShaderEnum::SIMPLE_TEXTURING);
-   model.Initialize(renderer);
+   model.Initialize(renderer, screenshot);
    renderer->PrepareRendering();
 }
 

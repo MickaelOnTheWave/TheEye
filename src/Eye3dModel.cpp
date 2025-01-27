@@ -14,13 +14,13 @@ namespace
    const float lowerLidClosedAngle = -0.5f;
 }
 
-void Eye3dModel::Initialize(GlRenderer *renderer)
+void Eye3dModel::Initialize(GlRenderer *renderer, const ImageData& screenshot)
 {
    const unsigned int sphereSubdivisions = 4;
 
    whiteTextureId = renderer->AddTexture(Vector3(1,1,1));
    Material* eyeMaterial = CreateEyeMaterial(renderer);
-   Material* skinMaterial = CreateSkinMaterial(renderer);
+   Material* skinMaterial = CreateSkinMaterial(renderer, screenshot);
 
    auto eyeSphere = new GlRenderSpherePolar(eyeMaterial, sphereSubdivisions,
                                             GlRenderSpherePolar::TextureMap::HalfWrap);
@@ -114,10 +114,9 @@ Material *Eye3dModel::CreateEyeMaterial(GlRenderer *renderer) const
    return eyeMaterial;
 }
 
-Material *Eye3dModel::CreateSkinMaterial(GlRenderer *renderer) const
+Material *Eye3dModel::CreateSkinMaterial(GlRenderer *renderer, const ImageData& screenshot) const
 {
-   const int channelCount = 3;
-   const unsigned int textureId = renderer->AddTexture("data/screenshot.png", channelCount);
+   const unsigned int textureId = renderer->AddTexture(screenshot);
    auto material = new Material("skin");
    material->diffuseTextureId = textureId;
    material->specularTextureId = whiteTextureId;

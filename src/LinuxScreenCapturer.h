@@ -1,12 +1,7 @@
 #ifndef LINUXSCREENCAPTURER_H
 #define LINUXSCREENCAPTURER_H
 
-struct ImageData
-{
-   unsigned int width;
-   unsigned int height;
-   unsigned char* data;
-};
+#include "ImageData.h"
 
 class LinuxScreenCapturer
 {

@@ -2,6 +2,7 @@
 #define EYE3DMODEL_H
 
 #include "GlRenderer.h"
+#include "ImageData.h"
 #include "math/Vector3.h"
 
 class Eye3dModel
@@ -9,7 +10,7 @@ class Eye3dModel
 public:
    Eye3dModel() = default;
 
-   void Initialize(GlRenderer* renderer);
+   void Initialize(GlRenderer* renderer, const ImageData& screenshot);
 
    void LookAt(const Vector3& target);
    void Open(const float t);
@@ -17,7 +18,7 @@ public:
 
 private:
    Material* CreateEyeMaterial(GlRenderer *renderer) const;
-   Material* CreateSkinMaterial(GlRenderer *renderer) const;
+   Material* CreateSkinMaterial(GlRenderer *renderer, const ImageData& screenshot) const;
 
    void UpdateLidTransform();
 

@@ -5,6 +5,7 @@
 
 #include "Eye3dModel.h"
 #include "GlRenderer.h"
+#include "ImageData.h"
 #include "math/Vector3.h"
 
 class Eye
@@ -12,7 +13,7 @@ class Eye
 public:
    Eye() = default;
 
-   void Initialize(GlRenderer* renderer);
+   void Initialize(GlRenderer* renderer, const ImageData& screenshot);
 
    void Update(std::optional<Vector3> facePosition, const float deltaT);
 

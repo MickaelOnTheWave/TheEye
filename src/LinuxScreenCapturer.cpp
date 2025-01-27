@@ -18,14 +18,15 @@ ImageData LinuxScreenCapturer::Capture()
    screenshot.height = attributes.height;
 
    XImage* img = XGetImage(display, root, 0, 0 , screenshot.width, screenshot.height, AllPlanes, ZPixmap);
+   screenshot.channels = img->bits_per_pixel / 8;
    //BitsPerPixel = img->bits_per_pixel;
    //Pixels.resize(screenshot.width * screenshot.height * 4);
 
    //memcpy(&Pixels[0], img->data, Pixels.size());
 
-   const unsigned int channels = 3;
-   screenshot.data = new unsigned char[screenshot.width * screenshot.height * sizeof(unsigned char) * channels];
-   memcpy(screenshot.data, img->data, screenshot.width * screenshot.height * channels);
+   const unsigned int componentCount = screenshot.width * screenshot.height * screenshot.channels;
+   screenshot.data = new unsigned char[componentCount * sizeof(unsigned char)];
+   memcpy(screenshot.data, img->data, componentCount);
 
    XDestroyImage(img);
    XCloseDisplay(display);
