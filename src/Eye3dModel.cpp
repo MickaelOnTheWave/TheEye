@@ -59,6 +59,9 @@ void Eye3dModel::Initialize(GlRenderer *renderer, const ImageData& screenshot)
    renderer->AddRenderObject(faceSkin);
    renderer->AddRenderObject(upperLid);
    renderer->AddRenderObject(lowerLid);
+
+   // Eye starts closed
+   Close(1.f);
 }
 
 void Eye3dModel::LookAt(const Vector3 &target)
