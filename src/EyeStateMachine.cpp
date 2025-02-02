@@ -9,6 +9,7 @@ EyeStateMachine::EyeStateMachine(Eye3dModel& _eyeModel)
    Add(new StateClosing(*this));
    Add(new StateOpen(*this));
    Add(new StateOpening(*this));
+   Add(new StateFocusing(*this));
 
    currentState = states["Closed"];
 }
@@ -21,10 +22,12 @@ void EyeStateMachine::Update(const float deltaT, std::optional<Vector3> facePosi
 void EyeStateMachine::Switch(const std::string &newStateName)
 {
    State* newState = states[newStateName];
-
-   currentState->Exit();
-   newState->Enter();
-   currentState = newState;
+   if (newState)
+   {
+      currentState->Exit();
+      newState->Enter();
+      currentState = newState;
+   }
 }
 
 Eye3dModel &EyeStateMachine::GetEyeModel()

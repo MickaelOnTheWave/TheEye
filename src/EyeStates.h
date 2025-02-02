@@ -7,6 +7,8 @@
 #include "EyeStateMachine.h"
 #include "math/Vector3.h"
 
+// TODO : Remove duplication of IsFaceStill().
+
 class State
 {
 public:
@@ -72,8 +74,13 @@ public:
    std::string GetName() const override;
 
 private:
+   bool IsFaceStill(const Vector3& currentPosition) const;
+
    const float closeThresholdT = 15.f;
+   const float focusThresholdT = 20.f;
    float faceHiddenT = 0.f;
+   float faceStillT = 0.f;
+   Vector3 previousFacePosition;
 };
 
 class StateOpening : public AnimatedState
@@ -84,6 +91,25 @@ public:
    void Update(const float deltaT, std::optional<Vector3> facePosition) override;
 
    std::string GetName() const override;
+};
+
+class StateFocusing : public State
+{
+public:
+   StateFocusing(EyeStateMachine& _stateMachine);
+
+   void Enter() override;
+   void Update(const float deltaT, std::optional<Vector3> facePosition) override;
+
+   std::string GetName() const override;
+
+protected:
+   bool IsFaceStill(const Vector3& currentPosition) const;
+
+   const float animationFinishT = 0.5f;
+   const float focusingFinishT = 6.f;
+   float animationT = 0.f;
+   std::optional<Vector3> previousFacePosition;
 };
 
 #endif // EYESTATES_H
