@@ -11,6 +11,33 @@ void State::Enter()
 {
 }
 
+void State::Exit()
+{
+}
+
+/******************************/
+
+AnimatedState::AnimatedState(EyeStateMachine &_stateMachine)
+  : State(_stateMachine)
+{
+}
+
+void AnimatedState::Enter()
+{
+   animationT = 0.f;
+}
+
+void AnimatedState::Update(const float deltaT, std::optional<Vector3> facePosition)
+{
+   animationT += deltaT;
+
+   if (animationT > animationFinishT)
+   {
+      stateMachine.Switch(animationFinishedState);
+      animationT = animationFinishT;
+   }
+}
+
 /******************************/
 
 StateClosed::StateClosed(EyeStateMachine& _stateMachine)
@@ -34,11 +61,6 @@ void StateClosed::Update(const float deltaT, std::optional<Vector3> facePosition
       stateMachine.Switch("Opening");
 }
 
-void StateClosed::Exit()
-{
-
-}
-
 std::string StateClosed::GetName() const
 {
    return "Closed";
@@ -47,29 +69,15 @@ std::string StateClosed::GetName() const
 /******************************/
 
 StateClosing::StateClosing(EyeStateMachine &_stateMachine)
-  : State(_stateMachine)
+  : AnimatedState(_stateMachine)
 {
-}
-
-void StateClosing::Enter()
-{
-   animationT = 0.f;
+   animationFinishedState = "Closed";
 }
 
 void StateClosing::Update(const float deltaT, std::optional<Vector3> facePosition)
 {
-   animationT += deltaT;
-
-   if (animationT > animationFinishT)
-   {
-      stateMachine.Switch("Closed");
-      animationT = animationFinishT;
-   }
+   AnimatedState::Update(deltaT, facePosition);
    stateMachine.GetEyeModel().Close(animationT);
-}
-
-void StateClosing::Exit()
-{
 }
 
 std::string StateClosing::GetName() const
@@ -105,11 +113,6 @@ void StateOpen::Update(const float deltaT, std::optional<Vector3> facePosition)
    }
 }
 
-void StateOpen::Exit()
-{
-
-}
-
 std::string StateOpen::GetName() const
 {
    return "Open";
@@ -118,30 +121,15 @@ std::string StateOpen::GetName() const
 /******************************/
 
 StateOpening::StateOpening(EyeStateMachine &_stateMachine)
-  : State(_stateMachine)
+  : AnimatedState(_stateMachine)
 {
-}
-
-void StateOpening::Enter()
-{
-   animationT = 0.f;
+   animationFinishedState = "Open";
 }
 
 void StateOpening::Update(const float deltaT, std::optional<Vector3> facePosition)
 {
-   animationT += deltaT;
-
-   if (animationT > animationFinishT)
-   {
-      stateMachine.Switch("Open");
-      animationT = animationFinishT;
-   }
+   AnimatedState::Update(deltaT, facePosition);
    stateMachine.GetEyeModel().Open(animationT);
-}
-
-void StateOpening::Exit()
-{
-
 }
 
 std::string StateOpening::GetName() const

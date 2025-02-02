@@ -14,12 +14,26 @@ public:
 
    virtual void Enter();
    virtual void Update(const float deltaT, std::optional<Vector3> facePosition) = 0;
-   virtual void Exit() = 0;
+   virtual void Exit();
 
    virtual std::string GetName() const = 0;
 
 protected:
    EyeStateMachine& stateMachine;
+};
+
+class AnimatedState : public State
+{
+public:
+   AnimatedState(EyeStateMachine& _stateMachine);
+
+   void Enter() override;
+   virtual void Update(const float deltaT, std::optional<Vector3> facePosition) override;
+
+protected:
+   const float animationFinishT = 1.f;
+   float animationT = 0.f;
+   std::string animationFinishedState;
 };
 
 class StateClosed : public State
@@ -29,7 +43,6 @@ public:
 
    void Enter() override;
    void Update(const float deltaT, std::optional<Vector3> facePosition) override;
-   void Exit() override;
 
    std::string GetName() const override;
 
@@ -38,20 +51,14 @@ private:
    float faceVisibleT = 0.f;
 };
 
-class StateClosing : public State
+class StateClosing : public AnimatedState
 {
 public:
    StateClosing(EyeStateMachine& _stateMachine);
 
-   void Enter() override;
    void Update(const float deltaT, std::optional<Vector3> facePosition) override;
-   void Exit() override;
 
    std::string GetName() const override;
-
-private:
-   const float animationFinishT = 1.f;
-   float animationT = 0.f;
 };
 
 class StateOpen : public State
@@ -61,7 +68,6 @@ public:
 
    void Enter() override;
    void Update(const float deltaT, std::optional<Vector3> facePosition) override;
-   void Exit() override;
 
    std::string GetName() const override;
 
@@ -70,20 +76,14 @@ private:
    float faceHiddenT = 0.f;
 };
 
-class StateOpening : public State
+class StateOpening : public AnimatedState
 {
 public:
    StateOpening(EyeStateMachine& _stateMachine);
 
-   void Enter() override;
    void Update(const float deltaT, std::optional<Vector3> facePosition) override;
-   void Exit() override;
 
    std::string GetName() const override;
-
-private:
-   const float animationFinishT = 1.f;
-   float animationT = 0.f;
 };
 
 #endif // EYESTATES_H
