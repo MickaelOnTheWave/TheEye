@@ -18,12 +18,20 @@ StateClosed::StateClosed(EyeStateMachine& _stateMachine)
 {
 }
 
+void StateClosed::Enter()
+{
+   faceVisibleT = 0.f;
+}
+
 void StateClosed::Update(const float deltaT, std::optional<Vector3> facePosition)
 {
    if (facePosition)
-   {
+      faceVisibleT += deltaT;
+   else
+      faceVisibleT = 0.f;
+
+   if (faceVisibleT > openThresholdT)
       stateMachine.Switch("Opening");
-   }
 }
 
 void StateClosed::Exit()
@@ -79,15 +87,22 @@ StateOpen::StateOpen(EyeStateMachine &_stateMachine)
 
 void StateOpen::Enter()
 {
-
+   faceHiddenT = 0.f;
 }
 
 void StateOpen::Update(const float deltaT, std::optional<Vector3> facePosition)
 {
    if (facePosition)
+   {
       stateMachine.GetEyeModel().LookAt(facePosition.value());
+      faceHiddenT = 0.f;
+   }
    else
-      stateMachine.Switch("Closing");
+   {
+      faceHiddenT += deltaT;
+      if (faceHiddenT > closeThresholdT)
+         stateMachine.Switch("Closing");
+   }
 }
 
 void StateOpen::Exit()

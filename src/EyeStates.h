@@ -27,10 +27,15 @@ class StateClosed : public State
 public:
    StateClosed(EyeStateMachine& _stateMachine);
 
+   void Enter() override;
    void Update(const float deltaT, std::optional<Vector3> facePosition) override;
    void Exit() override;
 
    std::string GetName() const override;
+
+private:
+   const float openThresholdT = 12.f;
+   float faceVisibleT = 0.f;
 };
 
 class StateClosing : public State
@@ -59,6 +64,10 @@ public:
    void Exit() override;
 
    std::string GetName() const override;
+
+private:
+   const float closeThresholdT = 15.f;
+   float faceHiddenT = 0.f;
 };
 
 class StateOpening : public State
