@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+using namespace std;
+
 /******************************/
 
 State::State(EyeStateMachine &_stateMachine)
@@ -29,15 +31,16 @@ void AnimatedState::Enter()
    animationT = 0.f;
 }
 
-void AnimatedState::Update(const float deltaT, std::optional<Vector3> facePosition)
+optional<string> AnimatedState::Update(const float deltaT, optional<Vector3> facePosition)
 {
    animationT += deltaT;
 
    if (animationT > animationFinishT)
    {
-      stateMachine.Switch(animationFinishedState);
       animationT = animationFinishT;
+      return make_optional(animationFinishedState);
    }
+   return nullopt;
 }
 
 /******************************/
@@ -52,7 +55,7 @@ void StateClosed::Enter()
    faceVisibleT = 0.f;
 }
 
-void StateClosed::Update(const float deltaT, std::optional<Vector3> facePosition)
+optional<string> StateClosed::Update(const float deltaT, optional<Vector3> facePosition)
 {
    if (facePosition)
       faceVisibleT += deltaT;
@@ -60,7 +63,8 @@ void StateClosed::Update(const float deltaT, std::optional<Vector3> facePosition
       faceVisibleT = 0.f;
 
    if (faceVisibleT > openThresholdT)
-      stateMachine.Switch("Opening");
+      return make_optional("Opening");
+   return nullopt;
 }
 
 std::string StateClosed::GetName() const
@@ -76,13 +80,14 @@ StateClosing::StateClosing(EyeStateMachine &_stateMachine)
    animationFinishedState = "Closed";
 }
 
-void StateClosing::Update(const float deltaT, std::optional<Vector3> facePosition)
+optional<string> StateClosing::Update(const float deltaT, optional<Vector3> facePosition)
 {
-   AnimatedState::Update(deltaT, facePosition);
+   optional<string> newState = AnimatedState::Update(deltaT, facePosition);
    stateMachine.GetEyeModel().Close(animationT);
+   return newState;
 }
 
-std::string StateClosing::GetName() const
+string StateClosing::GetName() const
 {
    return "Closing";
 }
@@ -101,8 +106,9 @@ void StateOpen::Enter()
    faceStillT = 0.f;
 }
 
-void StateOpen::Update(const float deltaT, std::optional<Vector3> facePosition)
+optional<string> StateOpen::Update(const float deltaT, optional<Vector3> facePosition)
 {
+   optional<string> newState = nullopt;
    if (facePosition)
    {
       stateMachine.GetEyeModel().LookAt(facePosition.value());
@@ -112,7 +118,7 @@ void StateOpen::Update(const float deltaT, std::optional<Vector3> facePosition)
       {
          faceStillT += deltaT;
          if (faceStillT > focusThresholdT)
-            stateMachine.Switch("Focusing");
+            newState = make_optional("Focusing");
       }
       previousFacePosition = facePosition.value();
    }
@@ -121,8 +127,9 @@ void StateOpen::Update(const float deltaT, std::optional<Vector3> facePosition)
       faceHiddenT += deltaT;
       faceStillT = 0.f;
       if (faceHiddenT > closeThresholdT)
-         stateMachine.Switch("Closing");
+         newState = make_optional("Closing");
    }
+   return newState;
 }
 
 std::string StateOpen::GetName() const
@@ -146,10 +153,11 @@ StateOpening::StateOpening(EyeStateMachine &_stateMachine)
    animationFinishedState = "Open";
 }
 
-void StateOpening::Update(const float deltaT, std::optional<Vector3> facePosition)
+optional<string> StateOpening::Update(const float deltaT, optional<Vector3> facePosition)
 {
-   AnimatedState::Update(deltaT, facePosition);
+   optional<string> newState = AnimatedState::Update(deltaT, facePosition);
    stateMachine.GetEyeModel().Open(animationT);
+   return newState;
 }
 
 std::string StateOpening::GetName() const
@@ -167,18 +175,19 @@ StateFocusing::StateFocusing(EyeStateMachine &_stateMachine)
 void StateFocusing::Enter()
 {
    animationT = 0.f;
-   previousFacePosition = std::nullopt;
+   previousFacePosition = nullopt;
 }
 
-void StateFocusing::Update(const float deltaT, std::optional<Vector3> facePosition)
+optional<string> StateFocusing::Update(const float deltaT, optional<Vector3> facePosition)
 {
+   optional<string> newState = nullopt;
    if (facePosition)
    {
       animationT += deltaT;
       if (!previousFacePosition)
          previousFacePosition = facePosition;
       if (!IsFaceStill(facePosition.value()))
-         stateMachine.Switch("Open");
+         newState = make_optional("Open");
 
       stateMachine.GetEyeModel().LookAt(facePosition.value());
 
@@ -191,7 +200,8 @@ void StateFocusing::Update(const float deltaT, std::optional<Vector3> facePositi
       stateMachine.GetEyeModel().Close(scaledT);
    }
    else
-      stateMachine.Switch("Open");
+      newState = make_optional("Open");
+   return newState;
 }
 
 std::string StateFocusing::GetName() const

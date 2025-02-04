@@ -16,18 +16,9 @@ EyeStateMachine::EyeStateMachine(Eye3dModel& _eyeModel)
 
 void EyeStateMachine::Update(const float deltaT, std::optional<Vector3> facePosition)
 {
-   currentState->Update(deltaT, facePosition);
-}
-
-void EyeStateMachine::Switch(const std::string &newStateName)
-{
-   State* newState = states[newStateName];
-   if (newState)
-   {
-      currentState->Exit();
-      newState->Enter();
-      currentState = newState;
-   }
+   std::optional<std::string> newState = currentState->Update(deltaT, facePosition);
+   if (newState.has_value())
+      Switch(newState.value());
 }
 
 Eye3dModel &EyeStateMachine::GetEyeModel()
@@ -41,3 +32,13 @@ void EyeStateMachine::Add(State *newState)
    states[stateName] = newState;
 }
 
+void EyeStateMachine::Switch(const std::string &newStateName)
+{
+   State* newState = states[newStateName];
+   if (newState)
+   {
+      currentState->Exit();
+      newState->Enter();
+      currentState = newState;
+   }
+}

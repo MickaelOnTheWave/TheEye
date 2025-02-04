@@ -16,11 +16,11 @@ public:
 
    void Update(const float deltaT, std::optional<Vector3> facePosition);
 
-   void Switch(const std::string& newStateName);
    Eye3dModel& GetEyeModel();
 
 private:
    void Add(State* newState);
+   void Switch(const std::string& newStateName);
 
    std::unordered_map<std::string, State*> states;
    State* currentState;

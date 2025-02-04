@@ -15,7 +15,15 @@ public:
    State(EyeStateMachine& _stateMachine);
 
    virtual void Enter();
-   virtual void Update(const float deltaT, std::optional<Vector3> facePosition) = 0;
+
+   /**
+    * @brief Update
+    * @param deltaT
+    * @param facePosition
+    * @return The name of the new state to switch to, or nothing if there is no change in state
+    */
+   virtual std::optional<std::string> Update(const float deltaT, std::optional<Vector3> facePosition) = 0;
+
    virtual void Exit();
 
    virtual std::string GetName() const = 0;
@@ -30,7 +38,7 @@ public:
    AnimatedState(EyeStateMachine& _stateMachine);
 
    void Enter() override;
-   virtual void Update(const float deltaT, std::optional<Vector3> facePosition) override;
+   std::optional<std::string> Update(const float deltaT, std::optional<Vector3> facePosition) override;
 
 protected:
    const float animationFinishT = 1.f;
@@ -44,7 +52,7 @@ public:
    StateClosed(EyeStateMachine& _stateMachine);
 
    void Enter() override;
-   void Update(const float deltaT, std::optional<Vector3> facePosition) override;
+   std::optional<std::string> Update(const float deltaT, std::optional<Vector3> facePosition) override;
 
    std::string GetName() const override;
 
@@ -58,7 +66,7 @@ class StateClosing : public AnimatedState
 public:
    StateClosing(EyeStateMachine& _stateMachine);
 
-   void Update(const float deltaT, std::optional<Vector3> facePosition) override;
+   std::optional<std::string> Update(const float deltaT, std::optional<Vector3> facePosition) override;
 
    std::string GetName() const override;
 };
@@ -69,7 +77,7 @@ public:
    StateOpen(EyeStateMachine& _stateMachine);
 
    void Enter() override;
-   void Update(const float deltaT, std::optional<Vector3> facePosition) override;
+   std::optional<std::string> Update(const float deltaT, std::optional<Vector3> facePosition) override;
 
    std::string GetName() const override;
 
@@ -88,7 +96,7 @@ class StateOpening : public AnimatedState
 public:
    StateOpening(EyeStateMachine& _stateMachine);
 
-   void Update(const float deltaT, std::optional<Vector3> facePosition) override;
+   std::optional<std::string> Update(const float deltaT, std::optional<Vector3> facePosition) override;
 
    std::string GetName() const override;
 };
@@ -99,7 +107,7 @@ public:
    StateFocusing(EyeStateMachine& _stateMachine);
 
    void Enter() override;
-   void Update(const float deltaT, std::optional<Vector3> facePosition) override;
+   std::optional<std::string> Update(const float deltaT, std::optional<Vector3> facePosition) override;
 
    std::string GetName() const override;
 
