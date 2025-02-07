@@ -22,7 +22,7 @@ void State::Exit()
 /******************************/
 
 AnimatedState::AnimatedState(EyeStateMachine &_stateMachine)
-  : State(_stateMachine)
+  : State(_stateMachine), modelAnimationFactor(1 / animationFinishT)
 {
 }
 
@@ -83,7 +83,7 @@ StateClosing::StateClosing(EyeStateMachine &_stateMachine)
 optional<string> StateClosing::Update(const float deltaT, optional<Vector3> facePosition)
 {
    optional<string> newState = AnimatedState::Update(deltaT, facePosition);
-   stateMachine.GetEyeModel().Close(animationT);
+   stateMachine.GetEyeModel().Close(animationT * modelAnimationFactor);
    return newState;
 }
 
@@ -95,15 +95,14 @@ string StateClosing::GetName() const
 /******************************/
 
 StateOpen::StateOpen(EyeStateMachine &_stateMachine)
-  : State(_stateMachine)
+  : State(_stateMachine), faceState(5.f, 0.02f)
 {
-
 }
 
 void StateOpen::Enter()
 {
    faceHiddenT = 0.f;
-   faceStillT = 0.f;
+   faceState.Reset();
 }
 
 optional<string> StateOpen::Update(const float deltaT, optional<Vector3> facePosition)
@@ -114,19 +113,14 @@ optional<string> StateOpen::Update(const float deltaT, optional<Vector3> facePos
       stateMachine.GetEyeModel().LookAt(facePosition.value());
       faceHiddenT = 0.f;
 
-      if (IsFaceStill(facePosition.value()))
-      {
-         faceStillT += deltaT;
-         if (faceStillT > focusThresholdT)
-            newState = make_optional("Focusing");
-      }
-      previousFacePosition = facePosition.value();
+      if (faceState.IsStill(deltaT, facePosition.value()))
+         newState = make_optional("Focusing");
    }
    else
    {
+      faceState.Reset();
       faceHiddenT += deltaT;
-      faceStillT = 0.f;
-      if (faceHiddenT > closeThresholdT)
+      if (faceHiddenT > waitBeforeClosingT)
          newState = make_optional("Closing");
    }
    return newState;
@@ -135,14 +129,6 @@ optional<string> StateOpen::Update(const float deltaT, optional<Vector3> facePos
 std::string StateOpen::GetName() const
 {
    return "Open";
-}
-
-bool StateOpen::IsFaceStill(const Vector3 &currentPosition) const
-{
-   const float maxDeltaLength = 0.5f;
-   const Vector3& faceDelta = currentPosition - previousFacePosition;
-   std::cout << "Current delta : " << faceDelta.ComputeLength() << std::endl;
-   return (faceDelta.ComputeLength() < maxDeltaLength);
 }
 
 /******************************/
@@ -156,7 +142,7 @@ StateOpening::StateOpening(EyeStateMachine &_stateMachine)
 optional<string> StateOpening::Update(const float deltaT, optional<Vector3> facePosition)
 {
    optional<string> newState = AnimatedState::Update(deltaT, facePosition);
-   stateMachine.GetEyeModel().Open(animationT);
+   stateMachine.GetEyeModel().Open(animationT * modelAnimationFactor);
    return newState;
 }
 
@@ -168,14 +154,15 @@ std::string StateOpening::GetName() const
 /******************************/
 
 StateFocusing::StateFocusing(EyeStateMachine &_stateMachine)
-  : State(_stateMachine)
+  : State(_stateMachine), faceState(0.f, 0.03f)
 {
 }
 
 void StateFocusing::Enter()
 {
    animationT = 0.f;
-   previousFacePosition = nullopt;
+   faceState.Reset();
+   firstUpdateAfterEnter = true;
 }
 
 optional<string> StateFocusing::Update(const float deltaT, optional<Vector3> facePosition)
@@ -184,9 +171,14 @@ optional<string> StateFocusing::Update(const float deltaT, optional<Vector3> fac
    if (facePosition)
    {
       animationT += deltaT;
-      if (!previousFacePosition)
-         previousFacePosition = facePosition;
-      if (!IsFaceStill(facePosition.value()))
+
+      if (firstUpdateAfterEnter)
+      {
+         firstUpdateAfterEnter = false;
+         faceState.Reset(facePosition);
+      }
+
+      if (!faceState.IsStill(deltaT, facePosition.value()))
          newState = make_optional("Open");
 
       stateMachine.GetEyeModel().LookAt(facePosition.value());
@@ -207,11 +199,4 @@ optional<string> StateFocusing::Update(const float deltaT, optional<Vector3> fac
 std::string StateFocusing::GetName() const
 {
    return "Focusing";
-}
-
-bool StateFocusing::IsFaceStill(const Vector3 &currentPosition) const
-{
-   const float maxDeltaLength = 0.05f;
-   const Vector3& faceDelta = currentPosition - previousFacePosition.value();
-   return (faceDelta.ComputeLength() < maxDeltaLength);
 }

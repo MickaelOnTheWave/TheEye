@@ -5,9 +5,8 @@
 #include <string>
 
 #include "EyeStateMachine.h"
+#include "FaceState.h"
 #include "math/Vector3.h"
-
-// TODO : Remove duplication of IsFaceStill().
 
 class State
 {
@@ -41,7 +40,8 @@ public:
    std::optional<std::string> Update(const float deltaT, std::optional<Vector3> facePosition) override;
 
 protected:
-   const float animationFinishT = 1.f;
+   const float animationFinishT = 0.1f;
+   float modelAnimationFactor;
    float animationT = 0.f;
    std::string animationFinishedState;
 };
@@ -57,7 +57,7 @@ public:
    std::string GetName() const override;
 
 private:
-   const float openThresholdT = 12.f;
+   const float openThresholdT = 3.f;
    float faceVisibleT = 0.f;
 };
 
@@ -82,13 +82,9 @@ public:
    std::string GetName() const override;
 
 private:
-   bool IsFaceStill(const Vector3& currentPosition) const;
-
-   const float closeThresholdT = 15.f;
-   const float focusThresholdT = 20.f;
+   FaceState faceState;
+   const float waitBeforeClosingT = 2.f;
    float faceHiddenT = 0.f;
-   float faceStillT = 0.f;
-   Vector3 previousFacePosition;
 };
 
 class StateOpening : public AnimatedState
@@ -112,12 +108,14 @@ public:
    std::string GetName() const override;
 
 protected:
-   bool IsFaceStill(const Vector3& currentPosition) const;
+   FaceState faceState;
 
    const float animationFinishT = 0.5f;
-   const float focusingFinishT = 6.f;
+   const float focusingFinishT = 1.f;
    float animationT = 0.f;
-   std::optional<Vector3> previousFacePosition;
+
+private:
+   bool firstUpdateAfterEnter = false;
 };
 
 #endif // EYESTATES_H
