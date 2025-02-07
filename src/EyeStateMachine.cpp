@@ -10,6 +10,7 @@ EyeStateMachine::EyeStateMachine(Eye3dModel& _eyeModel)
    Add(new StateOpen(*this));
    Add(new StateOpening(*this));
    Add(new StateFocusing(*this));
+   Add(new StateUnfocusing(*this));
 
    currentState = states["Closed"];
 }

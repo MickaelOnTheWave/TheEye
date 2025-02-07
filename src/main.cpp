@@ -13,7 +13,6 @@
 // TODO : Add procedural eye texture
 // TODO : Optimize face detection (reuse previous data)
 // TODO : Try to use CUDA / GPU for face detection
-// TODO : Implement funnier logic for eye
 // TODO : implement pupil dilation with distance
 
 const bool debugging = true;

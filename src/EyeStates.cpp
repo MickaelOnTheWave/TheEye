@@ -154,7 +154,7 @@ std::string StateOpening::GetName() const
 /******************************/
 
 StateFocusing::StateFocusing(EyeStateMachine &_stateMachine)
-  : State(_stateMachine), faceState(0.f, 0.03f)
+  : State(_stateMachine), faceState(0.f, 0.04f)
 {
 }
 
@@ -179,7 +179,7 @@ optional<string> StateFocusing::Update(const float deltaT, optional<Vector3> fac
       }
 
       if (!faceState.IsStill(deltaT, facePosition.value()))
-         newState = make_optional("Open");
+         newState = make_optional("Unfocusing");
 
       stateMachine.GetEyeModel().LookAt(facePosition.value());
 
@@ -192,7 +192,7 @@ optional<string> StateFocusing::Update(const float deltaT, optional<Vector3> fac
       stateMachine.GetEyeModel().Close(scaledT);
    }
    else
-      newState = make_optional("Open");
+      newState = make_optional("Unfocusing");
    return newState;
 }
 
@@ -200,3 +200,30 @@ std::string StateFocusing::GetName() const
 {
    return "Focusing";
 }
+
+/******************************/
+
+StateUnfocusing::StateUnfocusing(EyeStateMachine &_stateMachine)
+  : AnimatedState(_stateMachine)
+{
+   animationFinishT = 0.5f;
+   animationFinishedState = "Open";
+}
+
+std::optional<string> StateUnfocusing::Update(const float deltaT, std::optional<Vector3> facePosition)
+{
+   optional<string> newState = AnimatedState::Update(deltaT, facePosition);
+
+   const float animationFinishedT = 1.f;
+   const float deltaAnimationT = animationFinishedT - animationStartT;
+   const float deltaTimeT = animationT / animationFinishT;
+   const float scaledT = animationStartT + deltaAnimationT * deltaTimeT;
+   stateMachine.GetEyeModel().Open(scaledT);
+   return newState;
+}
+
+string StateUnfocusing::GetName() const
+{
+   return "Unfocusing";
+}
+

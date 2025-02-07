@@ -40,7 +40,7 @@ public:
    std::optional<std::string> Update(const float deltaT, std::optional<Vector3> facePosition) override;
 
 protected:
-   const float animationFinishT = 0.1f;
+   float animationFinishT = 0.1f;
    float modelAnimationFactor;
    float animationT = 0.f;
    std::string animationFinishedState;
@@ -116,6 +116,19 @@ protected:
 
 private:
    bool firstUpdateAfterEnter = false;
+};
+
+class StateUnfocusing : public AnimatedState
+{
+public:
+   StateUnfocusing(EyeStateMachine& _stateMachine);
+
+   std::optional<std::string> Update(const float deltaT, std::optional<Vector3> facePosition) override;
+
+   std::string GetName() const override;
+
+private:
+   const float animationStartT = 0.5f;
 };
 
 #endif // EYESTATES_H
