@@ -1,6 +1,8 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+#include <chrono>
+
 #include "GlRenderer.h"
 #include "cameras/OrbitCamera.h"
 
@@ -14,10 +16,17 @@
 // TODO : Implement funnier logic for eye
 // TODO : implement pupil dilation with distance
 
-const int windowSizeX = 1920;
-const int windowSizeY = 1080;
-const double windowXCenter = windowSizeX / 2.0;
-const double windowYCenter = windowSizeY / 2.0;
+const bool debugging = true;
+
+int GetWindowX()
+{
+   return (debugging) ? 800 : 1920;
+}
+
+int GetWindowY()
+{
+   return (debugging) ? 600 : 1080;
+}
 
 static void keyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -28,23 +37,15 @@ static void keyPressCallback(GLFWwindow* window, int key, int scancode, int acti
    }
 }
 
-Vector3 DetectFacePosition()
-{
-   Vector3 facePosition;
-   return facePosition;
-}
-
 int main()
 {
-   GLFWwindow* window;
-
    if (!glfwInit()) return -1;
-
 
    LinuxScreenCapturer screenshotCapturer;
    const ImageData screenshot = screenshotCapturer.Capture();
 
-   window = glfwCreateWindow(windowSizeX, windowSizeY, "Eye Renderer", glfwGetPrimaryMonitor(), nullptr);
+   GLFWmonitor* monitor = (debugging) ? nullptr : glfwGetPrimaryMonitor();
+   GLFWwindow* window = glfwCreateWindow(GetWindowX(), GetWindowY(), "Eye Renderer", monitor, nullptr);
    if (!window)
    {
       glfwTerminate();
@@ -56,7 +57,7 @@ int main()
 
    gladLoadGL(glfwGetProcAddress);
 
-   glViewport(0, 0, windowSizeX, windowSizeY);
+   glViewport(0, 0, GetWindowX(), GetWindowY());
 
    OrbitCamera camera(Vector3(0, 0, 0));
    auto renderer = new GlRenderer(&camera);
@@ -75,10 +76,11 @@ int main()
       Eye eye;
       eye.Initialize(renderer, screenshot);
 
-      const float deltaT = 0.2f;
+      float deltaT = 0.f;
 
       while (!glfwWindowShouldClose(window))
       {
+         const auto startIteration = std::chrono::steady_clock::now();
          glfwPollEvents();
 
          std::optional<Vector3>* faceDataToUse = nullptr;
@@ -100,6 +102,9 @@ int main()
          renderer->Render();
 
          glfwSwapBuffers(window);
+
+         const auto endIteration = std::chrono::steady_clock::now();
+         deltaT = std::chrono::duration<float>(endIteration - startIteration).count();
       }
 
       faceAnalyzer.StopThreadedDetection();
