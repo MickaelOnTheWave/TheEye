@@ -15,7 +15,7 @@
 // TODO : Try to use CUDA / GPU for face detection
 // TODO : implement pupil dilation with distance
 
-const bool debugging = true;
+const bool debugging = false;
 
 int GetWindowX()
 {
@@ -51,6 +51,7 @@ int main()
       return -1;
    }
 
+   glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
    glfwSetKeyCallback(window, keyPressCallback);
    glfwMakeContextCurrent(window);
 
