@@ -65,7 +65,7 @@ endif(KITGL_SUPPORT_GLFW)
 ###
 ### Generating the project files
 ###
-add_executable(${PROJECT_NAME} ${PROJ_SRC})
+add_executable(${PROJECT_NAME} ${PROJ_SRC} src/eye.frag)
 
 ###
 ### Linking to the project
@@ -73,6 +73,7 @@ add_executable(${PROJECT_NAME} ${PROJ_SRC})
 target_link_libraries(${PROJECT_NAME} RenderLib ImageProcessingToolsLib ${PROJ_LINK_LIBS})
 
 file(COPY "${CMAKE_SOURCE_DIR}/data" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "${CMAKE_SOURCE_DIR}/src/eye.frag" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/data")
 
 add_custom_target(Other SOURCES
     VERSION LICENSE

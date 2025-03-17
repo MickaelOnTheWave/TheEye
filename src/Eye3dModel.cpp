@@ -55,7 +55,7 @@ void Eye3dModel::Initialize(GlRenderer *renderer, const ImageData& screenshot)
    initialLowerLidTransform = scale *  Matrix4x4::RotationY(eyeLidAngle);
    lowerLid = new GlRenderedInstance(eyeLidDown, initialLowerLidTransform);
 
-   renderer->AddRenderObject(eyeBall);
+   renderer->AddRenderObject(eyeBall, GlRenderer::ShaderEnum::PROCEDURAL_EYE);
    renderer->AddRenderObject(faceSkin);
    renderer->AddRenderObject(upperLid);
    renderer->AddRenderObject(lowerLid);
