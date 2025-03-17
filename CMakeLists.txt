@@ -77,3 +77,8 @@ file(COPY "${CMAKE_SOURCE_DIR}/data" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 add_custom_target(Other SOURCES
     VERSION LICENSE
 )
+
+add_custom_target(BuildScripts SOURCES
+    scripts/BuildTools.sh scripts/buildLinuxBinaries.sh  scripts/makeDebianPackage.sh
+)
+
