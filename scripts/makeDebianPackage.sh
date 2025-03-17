@@ -2,8 +2,8 @@
 
 source "BuildTools.sh"
 
-PROJECT_BINARY=eye
-PACKAGE_VERSION=1
+PROJECT_BINARY="the-eye"
+PACKAGE_VERSION=3
 AUTHOR_NAME="Mickaël C. Guimarães"
 AUTHOR_EMAIL="mickael.dacruz@gmail.com"
 
@@ -33,10 +33,14 @@ createPackageStructure()
 copyFilesToStructure()
 {
     cd $PROJECT_ROOT
-    cp build/officialBuild/TheEye $PACKAGE_ROOT/$BIN_FOLDER/eyeScreensaver
-    cp build/officialBuild/data/eye-blue.jpg $PACKAGE_ROOT/$DATA_FOLDER/eye-blue.jpg
-    cp build/officialBuild/data/basic.vert $PACKAGE_ROOT/$DATA_FOLDER/basic.vert
-    cp build/officialBuild/data/singleTexture.frag $PACKAGE_ROOT/$DATA_FOLDER/singleTexture.frag
+    DATA_SRC=build/officialBuild/data
+    DATA_DEST=$PACKAGE_ROOT/$DATA_FOLDER
+
+    cp build/officialBuild/TheEye $PACKAGE_ROOT/$BIN_FOLDER/the-eye
+    cp $DATA_SRC/eye-blue.jpg $DATA_DEST/eye-blue.jpg
+    cp $DATA_SRC/basic.vert $DATA_DEST/basic.vert
+    cp $DATA_SRC/singleTexture.frag $DATA_DEST/singleTexture.frag
+    cp $DATA_SRC/haarcascade_frontalface_default.xml $DATA_DEST/haarcascade_frontalface_default.xml
 }
 
 createDebianControlFile()
@@ -55,6 +59,8 @@ createDebianControlFile()
 createPackage()
 {
     cd $PACKAGE_ROOT
+    chown root:root -R $PACKAGE_NAME
+    chmod 0755 $BIN_FOLDER/the-eye
     dpkg-deb --build $PACKAGE_NAME
 }
 
