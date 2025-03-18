@@ -29,6 +29,14 @@ unset(KITGL_SUPPORT_GLFW CACHE)
 # Enable desired libs
 option(KITGL_SUPPORT_GLFW "Set ON/OFF to enable/disable GLFW support." ON)
 
+option(USE_SYSTEM_DATA "Use system-wide data directory" ON)
+
+if(USE_SYSTEM_DATA)
+    add_definitions(-DDATA_PATH="/usr/share/the-eye")
+else()
+    add_definitions(-DDATA_PATH="./data")
+endif()
+
 ###
 ### Initialization
 ###

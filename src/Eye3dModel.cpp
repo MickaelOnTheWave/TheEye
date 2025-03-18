@@ -108,7 +108,7 @@ void Eye3dModel::Close(const float t)
 Material *Eye3dModel::CreateEyeMaterial(GlRenderer *renderer) const
 {
    const int channelCount = 3;
-   const unsigned int eyeTextureId = renderer->AddTexture("data/eye-blue.jpg", channelCount);
+   const unsigned int eyeTextureId = renderer->AddTexture(std::string(DATA_PATH) + "/eye-blue.jpg", channelCount);
    Material* eyeMaterial = new Material("eye");
    eyeMaterial->diffuseTextureId = eyeTextureId;
    eyeMaterial->specularTextureId = whiteTextureId;

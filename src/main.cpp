@@ -10,6 +10,9 @@
 #include "EyeFaceAnalyzer.h"
 #include "LinuxScreenCapturer.h"
 
+// TODO : Use a DEFINE for the data dir, and update Cmake accordingly.
+// For Linux, it should be /usr/share/the-eye.
+// For local builds, probably just ./data.
 // TODO : Add procedural eye texture
 // TODO : Optimize face detection (reuse previous data)
 // TODO : Try to use CUDA / GPU for face detection

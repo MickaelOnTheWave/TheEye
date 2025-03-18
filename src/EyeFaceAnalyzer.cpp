@@ -7,7 +7,7 @@ EyeFaceAnalyzer::EyeFaceAnalyzer(std::mutex& _faceMutex, std::optional<Vector3>&
 
 int EyeFaceAnalyzer::Initialize()
 {
-   const bool ok = detector.Initialize("data/haarcascade_frontalface_default.xml");
+   const bool ok = detector.Initialize(std::string(DATA_PATH) + "/haarcascade_frontalface_default.xml");
    if (!ok)
       return ERROR_WITH_CASCADE_FILE;
    return OK;
