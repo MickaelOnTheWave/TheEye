@@ -3,12 +3,14 @@
 
 #include "ImageData.h"
 
+#include <vector>
+
 class LinuxScreenCapturer
 {
 public:
    LinuxScreenCapturer() = default;
 
-   virtual ImageData Capture();
+   virtual std::vector<ImageData> Capture();
 };
 
 #endif // LINUXSCREENCAPTURER_H

@@ -70,6 +70,8 @@ if(KITGL_SUPPORT_GLFW)
     list(APPEND PROJ_LINK_LIBS glfw)
 endif(KITGL_SUPPORT_GLFW)
 
+list(APPEND PROJ_LINK_LIBS Xinerama)
+
 ###
 ### Generating the project files
 ###
