@@ -1,7 +1,6 @@
 #include "LinuxScreenCapturer.h"
 
 #include <cstring>
-#include <vector>
 #include <X11/extensions/Xinerama.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -32,9 +31,9 @@ namespace
 
    }
 
-   std::vector<ImageData> CaptureMultiScreen(Display* display)
+   std::unordered_map<MonitorPosition, ImageData> CaptureMultiScreen(Display* display)
    {
-      std::vector<ImageData> screenshots;
+      std::unordered_map<MonitorPosition, ImageData> screenshots;
       int screenCount = 0;
 
       XineramaScreenInfo* screens = XineramaQueryScreens(display, &screenCount);
@@ -56,22 +55,36 @@ namespace
          memcpy(screenshot.data, img->data, componentCount);
 
          XDestroyImage(img);
-         screenshots.push_back(screenshot);
+
+         MonitorPosition pos;
+         pos.xOrigin = info.x_org;
+         pos.yOrigin = info.y_org;
+         screenshots[pos] = screenshot;
       }
       return screenshots;
    }
 }
 
-
-std::vector<ImageData> LinuxScreenCapturer::Capture()
+MonitorPosition::MonitorPosition()
+: xOrigin(0), yOrigin(0)
 {
-   std::vector<ImageData> screenshots;
+}
+
+bool MonitorPosition::operator==(const MonitorPosition other) const
+{
+   return xOrigin == other.xOrigin && yOrigin == other.yOrigin;
+}
+
+
+std::unordered_map<MonitorPosition, ImageData> LinuxScreenCapturer::Capture()
+{
+   std::unordered_map<MonitorPosition, ImageData> screenshots;
    Display* display = XOpenDisplay(nullptr);
 
    if (XineramaIsActive(display))
       screenshots = CaptureMultiScreen(display);
    else
-      screenshots.push_back(CaptureSingleScreen(display));
+      screenshots[MonitorPosition()] = CaptureSingleScreen(display);
 
    XCloseDisplay(display);
    return screenshots;

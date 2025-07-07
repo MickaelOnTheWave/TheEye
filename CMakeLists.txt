@@ -13,7 +13,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
+set(OpenCV_STATIC ON)
+
 find_package( OpenCV REQUIRED )
+
+find_package( Eigen3 REQUIRED )
+find_package( Iconv REQUIRED )
 
 add_subdirectory(RenderLib)
 add_subdirectory(FaceDetectionLib)
@@ -80,7 +85,12 @@ add_executable(${PROJECT_NAME} ${PROJ_SRC})
 ###
 ### Linking to the project
 ###
-target_link_libraries(${PROJECT_NAME} RenderLib ImageProcessingToolsLib ${PROJ_LINK_LIBS})
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    RenderLib
+    ImageProcessingToolsLib
+    ${OpenCV_LIBS}
+    Iconv::Iconv
+    ${PROJ_LINK_LIBS})
 
 file(COPY "${CMAKE_SOURCE_DIR}/data" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 

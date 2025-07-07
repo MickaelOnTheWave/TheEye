@@ -20,16 +20,6 @@
 
 const bool debugging = false;
 
-int GetWindowX()
-{
-   return (debugging) ? 800 : 1920;
-}
-
-int GetWindowY()
-{
-   return (debugging) ? 600 : 1080;
-}
-
 static void keyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
    if (action == GLFW_PRESS)
@@ -39,15 +29,32 @@ static void keyPressCallback(GLFWwindow* window, int key, int scancode, int acti
    }
 }
 
+ImageData FindRightScreenshot(const std::unordered_map<MonitorPosition, ImageData>& screenshots, GLFWmonitor* monitor)
+{
+   int currentMonitorX, currentMonitorY;
+   glfwGetMonitorPos(monitor, &currentMonitorX, &currentMonitorY);
+
+   auto it = screenshots.begin();
+   for (; it != screenshots.end(); ++it)
+   {
+      if (it->first.xOrigin == currentMonitorX && it->first.yOrigin == currentMonitorY)
+         return it->second;
+   }
+   return screenshots.begin()->second;
+}
+
 int main()
 {
    if (!glfwInit()) return -1;
 
    LinuxScreenCapturer screenshotCapturer;
-   const ImageData screenshot = screenshotCapturer.Capture();
+   const std::unordered_map<MonitorPosition, ImageData> screenshots = screenshotCapturer.Capture();
 
    GLFWmonitor* monitor = (debugging) ? nullptr : glfwGetPrimaryMonitor();
-   GLFWwindow* window = glfwCreateWindow(GetWindowX(), GetWindowY(), "Eye Renderer", monitor, nullptr);
+   const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+   const int monitorWidth = (debugging) ? 800 : mode->width;
+   const int monitorHeight = (debugging) ? 600 : mode->height;
+   GLFWwindow* window = glfwCreateWindow(monitorWidth, monitorHeight, "Eye Renderer", monitor, nullptr);
    if (!window)
    {
       glfwTerminate();
@@ -60,7 +67,7 @@ int main()
 
    gladLoadGL(glfwGetProcAddress);
 
-   glViewport(0, 0, GetWindowX(), GetWindowY());
+   glViewport(0, 0, monitorWidth, monitorHeight);
 
    OrbitCamera camera(Vector3(0, 0, 0));
    auto renderer = new GlRenderer(&camera);
@@ -77,7 +84,8 @@ int main()
       faceAnalyzer.RunThreadedDetection();
 
       Eye eye;
-      eye.Initialize(renderer, screenshot);
+      const ImageData rightScreen = FindRightScreenshot(screenshots, monitor);
+      eye.Initialize(renderer, rightScreen);
 
       float deltaT = 0.f;
 
