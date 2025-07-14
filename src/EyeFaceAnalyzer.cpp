@@ -1,7 +1,9 @@
 #include "EyeFaceAnalyzer.h"
 
+#include "HaarFaceDetector.h"
+
 EyeFaceAnalyzer::EyeFaceAnalyzer(std::mutex& _faceMutex, std::optional<Vector3>& _facePosition)
-  : faceMutex(_faceMutex), facePosition(_facePosition)
+  : faceMutex(_faceMutex), facePosition(_facePosition), detector(new HaarFaceDetector())
 {
 }
 
