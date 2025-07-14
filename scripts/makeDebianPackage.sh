@@ -51,7 +51,6 @@ createDebianControlFile()
     echo "Version: $PROJECT_VERSION-$PACKAGE_VERSION" >> $CONTROL_FILE
     echo "Architecture: amd64" >> $CONTROL_FILE
     #echo "Depends: libsomethingorrather (>= 1.2.13), anotherDependency (>= 1.2.6)" >> $CONTROL_FILE
-    echo "Depends: libopencv-core406t64" >> $CONTROL_FILE # On Ubuntu 24
     echo "Maintainer: $AUTHOR_NAME <$AUTHOR_EMAIL>" >> $CONTROL_FILE
     echo "Description: Eye Screensaver" >> $CONTROL_FILE
     echo " A screensaver that watches you when you are idle." >> $CONTROL_FILE
