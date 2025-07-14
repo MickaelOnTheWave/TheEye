@@ -20,8 +20,7 @@ find_package( OpenCV REQUIRED )
 find_package( Eigen3 REQUIRED )
 find_package( Iconv REQUIRED )
 
-add_subdirectory(RenderLib)
-add_subdirectory(FaceDetectionLib)
+add_subdirectory(libs)
 
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
