@@ -1,15 +1,17 @@
 #include "EyeFaceAnalyzer.h"
 
-#include "HaarFaceDetector.h"
+#include "CnnFaceDetector.h"
 
 EyeFaceAnalyzer::EyeFaceAnalyzer(std::mutex& _faceMutex, std::optional<Vector3>& _facePosition)
-  : faceMutex(_faceMutex), facePosition(_facePosition), detector(new HaarFaceDetector())
+  : faceMutex(_faceMutex), facePosition(_facePosition), detector(new CnnFaceDetector())
 {
 }
 
 int EyeFaceAnalyzer::Initialize()
 {
-   const bool ok = detector.Initialize(std::string(DATA_PATH) + "/haarcascade_frontalface_default.xml");
+   const std::vector<std::string> modelFiles = {std::string(DATA_PATH) + "/deploy.prototxt",
+                                                std::string(DATA_PATH) + "/res10_300x300_ssd_iter_140000.caffemodel"};
+   const bool ok = detector.Initialize(modelFiles);
    if (!ok)
       return ERROR_WITH_CASCADE_FILE;
    return OK;
