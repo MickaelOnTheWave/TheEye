@@ -3,6 +3,9 @@
 [![Platform](https://img.shields.io/badge/platform-Linux-blue.svg)](https://github.com/MickaelOnTheWave/TheEye)
 [![C++](https://img.shields.io/badge/C++-17-00599C.svg)](https://isocpp.org/)
 [![OpenGL](https://img.shields.io/badge/OpenGL-3.3+-5586A4.svg)](https://www.opengl.org/)
+[![OpenCV](https://img.shields.io/badge/OpenCV-4.x-5C3EE8.svg)](https://opencv.org/)
+[![AI](https://img.shields.io/badge/AI-MobileNet%20SSD-FF6F00.svg)](https://github.com/chuanqi305/MobileNet-SSD)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 **The screensaver that screensaves back.** An intelligent prank screensaver that lulls viewers into thinking your computer is still awake... until an eye suddenly opens and starts watching them.
 
