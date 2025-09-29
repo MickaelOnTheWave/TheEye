@@ -94,7 +94,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 file(COPY "${CMAKE_SOURCE_DIR}/data" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_custom_target(Other SOURCES
-    VERSION LICENSE
+    VERSION LICENSE README.md
 )
 
 add_custom_target(BuildScripts SOURCES
