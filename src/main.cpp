@@ -18,13 +18,34 @@
 // TODO : Try to use CUDA / GPU for face detection
 // TODO : implement pupil dilation with distance
 
+#ifdef DEBUGGING
+const bool debugging = true;
+#else
 const bool debugging = false;
+#endif
+
+static float globalT = 0.f;
 
 static void keyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
    if (action == GLFW_PRESS)
    {
-      if (key == GLFW_KEY_ESCAPE)
+      if (!debugging || key == GLFW_KEY_ESCAPE)
+         glfwSetWindowShouldClose(window, GLFW_TRUE);
+   }
+}
+
+static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+   if (!debugging)
+      glfwSetWindowShouldClose(window, GLFW_TRUE);
+}
+
+void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
+{
+   if (globalT > 1.f) // Ignore the first second
+   {
+      if (!debugging)
          glfwSetWindowShouldClose(window, GLFW_TRUE);
    }
 }
@@ -50,10 +71,11 @@ int main()
    LinuxScreenCapturer screenshotCapturer;
    const std::unordered_map<MonitorPosition, ImageData> screenshots = screenshotCapturer.Capture();
 
-   GLFWmonitor* monitor = (debugging) ? nullptr : glfwGetPrimaryMonitor();
+   GLFWmonitor* monitor = glfwGetPrimaryMonitor();
    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-   const int monitorWidth = (debugging) ? 800 : mode->width;
-   const int monitorHeight = (debugging) ? 600 : mode->height;
+   const int monitorWidth = mode->width;
+   const int monitorHeight = mode->height;
+
    GLFWwindow* window = glfwCreateWindow(monitorWidth, monitorHeight, "Eye Renderer", monitor, nullptr);
    if (!window)
    {
@@ -63,6 +85,8 @@ int main()
 
    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
    glfwSetKeyCallback(window, keyPressCallback);
+   glfwSetMouseButtonCallback(window, mouseButtonCallback);
+   glfwSetCursorPosCallback(window, mouseMoveCallback);
    glfwMakeContextCurrent(window);
 
    gladLoadGL(glfwGetProcAddress);
@@ -116,6 +140,7 @@ int main()
 
          const auto endIteration = std::chrono::steady_clock::now();
          deltaT = std::chrono::duration<float>(endIteration - startIteration).count();
+         globalT += deltaT;
       }
 
       faceAnalyzer.StopThreadedDetection();

@@ -41,6 +41,10 @@ else()
     add_definitions(-DDATA_PATH="./data")
 endif()
 
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_definitions(-DDEBUGGING)
+endif()
+
 ###
 ### Initialization
 ###
