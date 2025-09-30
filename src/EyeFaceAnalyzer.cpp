@@ -7,14 +7,11 @@ EyeFaceAnalyzer::EyeFaceAnalyzer(std::mutex& _faceMutex, std::optional<Vector3>&
 {
 }
 
-int EyeFaceAnalyzer::Initialize()
+bool EyeFaceAnalyzer::Initialize()
 {
    const std::vector<std::string> modelFiles = {std::string(DATA_PATH) + "/deploy.prototxt",
                                                 std::string(DATA_PATH) + "/res10_300x300_ssd_iter_140000.caffemodel"};
-   const bool ok = detector.Initialize(modelFiles);
-   if (!ok)
-      return ERROR_WITH_CASCADE_FILE;
-   return OK;
+   return detector.Initialize(modelFiles);
 }
 
 void EyeFaceAnalyzer::RunThreadedDetection()

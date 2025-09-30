@@ -12,15 +12,12 @@ class EyeFaceAnalyzer
 public:
    EyeFaceAnalyzer(std::mutex& _faceMutex, std::optional<Vector3>& _facePosition);
 
-   int Initialize();
+    bool Initialize();
 
    void RunThreadedDetection();
    void StopThreadedDetection();
 
    std::optional<Vector3> Detect();
-
-   static const int OK = 0;
-   static const int ERROR_WITH_CASCADE_FILE = 1;
 
 private:
    void RunThreadedDetect();

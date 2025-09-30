@@ -78,8 +78,8 @@ int main()
    std::optional<Vector3> lastFacePosition;
 
    EyeFaceAnalyzer faceAnalyzer(faceMutex, facePosition);
-   const int returnCode = faceAnalyzer.Initialize();
-   if (returnCode == EyeFaceAnalyzer::OK)
+   const bool ok = faceAnalyzer.Initialize();
+   if (ok)
    {
       faceAnalyzer.RunThreadedDetection();
 
@@ -121,11 +121,11 @@ int main()
       faceAnalyzer.StopThreadedDetection();
    }
    else
-      std::cout << "Error initializing haarcascade. Check if cascade file exists." << std::endl;
+      std::cout << "Error initializing Face analyzer. Check if you have a working camera and if the data folder is accessible." << std::endl;
 
    // Clean up
    delete renderer;
    glfwTerminate();
-   return returnCode;
+   return ok ? 0 : 1;
 }
 

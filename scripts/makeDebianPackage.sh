@@ -3,7 +3,7 @@
 source "BuildTools.sh"
 
 PROJECT_BINARY="the-eye"
-PACKAGE_VERSION=1
+PACKAGE_VERSION=2
 AUTHOR_NAME="Mickaël C. Guimarães"
 AUTHOR_EMAIL="mickael.dacruz@gmail.com"
 
@@ -40,7 +40,8 @@ copyFilesToStructure()
     cp $DATA_SRC/eye-blue.jpg $DATA_DEST/eye-blue.jpg
     cp $DATA_SRC/basic.vert $DATA_DEST/basic.vert
     cp $DATA_SRC/singleTexture.frag $DATA_DEST/singleTexture.frag
-    cp $DATA_SRC/haarcascade_frontalface_default.xml $DATA_DEST/haarcascade_frontalface_default.xml
+    cp $DATA_SRC/deploy.prototxt $DATA_DEST/deploy.prototxt
+    cp $DATA_SRC/res10_300x300_ssd_iter_140000.caffemodel $DATA_DEST/res10_300x300_ssd_iter_140000.caffemodel
 }
 
 createDebianControlFile()
@@ -53,7 +54,7 @@ createDebianControlFile()
     #echo "Depends: libsomethingorrather (>= 1.2.13), anotherDependency (>= 1.2.6)" >> $CONTROL_FILE
     echo "Maintainer: $AUTHOR_NAME <$AUTHOR_EMAIL>" >> $CONTROL_FILE
     echo "Description: Eye Screensaver" >> $CONTROL_FILE
-    echo " A screensaver that watches you when you are idle." >> $CONTROL_FILE
+    echo " A screensaver that screensaves you back." >> $CONTROL_FILE
 }
 
 createPackage()
