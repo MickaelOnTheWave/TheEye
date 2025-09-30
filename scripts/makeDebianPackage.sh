@@ -3,7 +3,7 @@
 source "BuildTools.sh"
 
 PROJECT_BINARY="the-eye"
-PACKAGE_VERSION=2
+PACKAGE_VERSION=0
 AUTHOR_NAME="Mickaël C. Guimarães"
 AUTHOR_EMAIL="mickael.dacruz@gmail.com"
 
