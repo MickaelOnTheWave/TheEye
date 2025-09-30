@@ -56,7 +56,7 @@ TheEye combines several technologies to create this experience:
 - AI-powered face detection with trigger logic
 - Smooth eyelid opening animation
 - Real-time 3D eye tracking
-- Linux Mint support with DEB packaging
+- Tested on Mint/Cinnamon and Ubuntu/KDE
 
 **🔮 Roadmap:**
 - Windows support
