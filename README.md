@@ -1,4 +1,4 @@
-# TheEye 👁️
+# The Eye 👁️
 
 [![Platform](https://img.shields.io/badge/platform-Linux-blue.svg)](https://github.com/MickaelOnTheWave/TheEye)
 [![C++](https://img.shields.io/badge/C++-17-00599C.svg)](https://isocpp.org/)
