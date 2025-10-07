@@ -32,6 +32,7 @@ jobs:
           libopencv-dev \
           libeigen3-dev \
           libglfw3-dev \
+          libglm-dev \
           cmake \
           build-essential \
           libxinerama-dev \
