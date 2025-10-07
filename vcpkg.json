@@ -1,0 +1,11 @@
+{
+  "name": "theeye",
+  "version-string": "0.6",
+  "dependencies": [
+    "opencv4",
+    "eigen3",
+    "glfw3",
+    "glm",
+    "libiconv"
+  ]
+}
