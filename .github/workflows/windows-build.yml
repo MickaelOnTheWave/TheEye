@@ -12,6 +12,8 @@ env:
 jobs:
   build-windows:
     runs-on: windows-latest
+    permissions:
+      packages: write
     
     steps:
     - name: Checkout code
@@ -21,10 +23,9 @@ jobs:
     
     - name: Setup vcpkg
       uses: lukka/run-vcpkg@v11
-    
-    - name: Install dependencies with vcpkg
-      run: |
-        vcpkg install opencv4:x64-windows eigen3:x64-windows glfw3:x64-windows glm:x64-windows libiconv:x64-windows
+      with:
+        vcpkgTriplet: "x64-windows"
+        vcpkgBinaryCaching: 'nuget,GitHub,readwrite'
     
     - name: Configure CMake
       run: |
