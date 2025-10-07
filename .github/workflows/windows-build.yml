@@ -21,10 +21,8 @@ jobs:
     
     - name: Setup vcpkg
       uses: lukka/run-vcpkg@v11
-    
-    - name: Install dependencies with vcpkg
-      run: |
-        vcpkg install opencv4:x64-windows eigen3:x64-windows glfw3:x64-windows glm:x64-windows libiconv:x64-windows
+      with:
+        vcpkgTriplet: "x64-windows"
     
     - name: Configure CMake
       run: |
