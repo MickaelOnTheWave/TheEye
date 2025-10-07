@@ -1,0 +1,58 @@
+name: Windows Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  BUILD_TYPE: Release
+  
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgGitCommitId: 'a42af01b72c28a8e1d7b48107b33e4f286a55ef6'  # Stable version
+    
+    - name: Install dependencies with vcpkg
+      run: |
+        vcpkg install opencv4:x64-windows eigen3:x64-windows glfw3:x64-windows glm:x64-windows libiconv:x64-windows
+    
+    - name: Configure CMake
+      run: |
+        cmake -B build -S . `
+          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake `
+          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} `
+          -DVCPKG_TARGET_TRIPLET=x64-windows
+    
+    - name: Build
+      run: |
+        cmake --build build --config ${{env.BUILD_TYPE}}
+    
+    - name: Test
+      run: |
+        dir build\Release\TheEye.exe
+    
+    - name: Gather artifacts
+      run: |
+        mkdir artifacts
+        copy build\Release\TheEye.exe artifacts\
+        copy build\Release\*.dll artifacts\ 2>$null || echo "No DLLs to copy"
+      shell: pwsh
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: TheEye-Windows
+        path: artifacts/
+        retention-days: 7
