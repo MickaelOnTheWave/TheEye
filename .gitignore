@@ -1,3 +1,3 @@
 build/*
-EyeRendererOld/build/Desktop_Qt_6_7_0-Debug
+out/*
 CMakeLists.txt.user
