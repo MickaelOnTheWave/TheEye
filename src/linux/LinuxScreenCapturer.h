@@ -1,38 +1,19 @@
 #ifndef LINUXSCREENCAPTURER_H
 #define LINUXSCREENCAPTURER_H
 
-#include "ImageData.h"
-
 #include <unordered_map>
 
-struct MonitorPosition
-{
-   MonitorPosition();
+#include "AbstractScreenCapturer.h"
+#include "ImageData.h"
+#include "MonitorPosition.h"
 
-   bool operator==(const MonitorPosition other) const;
-
-   int xOrigin;
-   int yOrigin;
-
-};
-
-namespace std {
-template <>
-struct hash<MonitorPosition> {
-   size_t operator()(const MonitorPosition& key) const {
-      size_t h1 = std::hash<int>()(key.xOrigin);
-      size_t h2 = std::hash<int>()(key.yOrigin);
-      return h1 ^ (h2 << 1);
-   }
-};
-}
-
-class LinuxScreenCapturer
+class LinuxScreenCapturer : public AbstractScreenCapturer
 {
 public:
    LinuxScreenCapturer() = default;
+   virtual ~LinuxScreenCapturer() = default;
 
-   virtual std::unordered_map<MonitorPosition, ImageData> Capture();
+   std::unordered_map<MonitorPosition, ImageData> Capture() override;
 };
 
 #endif // LINUXSCREENCAPTURER_H

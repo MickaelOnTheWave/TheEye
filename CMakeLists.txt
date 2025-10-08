@@ -56,7 +56,7 @@ set(PROJ_LINK_LIBS)
 set(PROJ_SRC)
 
 # Add all files/folders under src folder automatically to the project
-file(GLOB_RECURSE PROJ_SRC src/*.h src/*.cpp)
+file(GLOB PROJ_SRC src/*.h src/*.cpp)
 file(GLOB_RECURSE srcLinux src/linux/*.h src/linux/*.cpp)
 file(GLOB_RECURSE srcWindows src/windows/*.h src/windows/*.cpp)
 
@@ -83,14 +83,18 @@ if(KITGL_SUPPORT_GLFW)
     list(APPEND PROJ_LINK_LIBS glfw)
 endif(KITGL_SUPPORT_GLFW)
 
-list(APPEND PROJ_LINK_LIBS Xinerama)
+if(UNIX)
+    list(APPEND PROJ_LINK_LIBS Xinerama)
+endif()
 
 add_executable(${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME} PRIVATE ${PROJ_SRC})
 if (WIN32)
+    message(STATUS "Adding Windows sources")
     target_sources(${PROJECT_NAME} PRIVATE ${srcWindows})
 elseif(UNIX)
+    message(STATUS "Adding Linux sources")
     target_sources(${PROJECT_NAME} PRIVATE ${srcLinux})
 endif()
 

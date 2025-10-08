@@ -8,7 +8,13 @@
 
 #include "Eye.h"
 #include "EyeFaceAnalyzer.h"
-#include "LinuxScreenCapturer.h"
+#include "MonitorPosition.h"
+
+#ifdef __linux
+    #include "linux/LinuxScreenCapturer.h"
+#elif defined WIN32
+    #include "windows/WindowsScreenCapturer.h"
+#endif
 
 // TODO : Use a DEFINE for the data dir, and update Cmake accordingly.
 // For Linux, it should be /usr/share/the-eye.
@@ -64,12 +70,21 @@ ImageData FindRightScreenshot(const std::unordered_map<MonitorPosition, ImageDat
    return screenshots.begin()->second;
 }
 
+AbstractScreenCapturer* CreateScreenCapturer()
+{
+#ifdef __linux
+    return new LinuxScreenCapturer();
+#elif defined WIN32
+    return new WindowsScreenCapturer();
+#endif
+}
+
 int main()
 {
    if (!glfwInit()) return -1;
 
-   LinuxScreenCapturer screenshotCapturer;
-   const std::unordered_map<MonitorPosition, ImageData> screenshots = screenshotCapturer.Capture();
+   auto screenshotCapturer = CreateScreenCapturer();
+   const std::unordered_map<MonitorPosition, ImageData> screenshots = screenshotCapturer->Capture();
 
    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
@@ -150,6 +165,7 @@ int main()
 
    // Clean up
    delete renderer;
+   delete screenshotCapturer;
    glfwTerminate();
    return ok ? 0 : 1;
 }
