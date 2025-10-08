@@ -16,9 +16,12 @@ set(CMAKE_CXX_EXTENSIONS ON)
 set(OpenCV_STATIC ON)
 
 find_package( OpenCV REQUIRED )
-
 find_package( Eigen3 REQUIRED )
 find_package( Iconv REQUIRED )
+
+if (WIN32)
+    find_package(glm CONFIG REQUIRED)
+endif()
 
 add_subdirectory(libs)
 
@@ -94,6 +97,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${OpenCV_LIBS}
     Iconv::Iconv
     ${PROJ_LINK_LIBS})
+
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
+endif()
+
 
 file(COPY "${CMAKE_SOURCE_DIR}/data" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
