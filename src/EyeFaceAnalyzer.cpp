@@ -43,8 +43,9 @@ void EyeFaceAnalyzer::RunThreadedDetect()
 {
    while (keepRunning)
    {
+      std::optional<Vector3> newFacePosition = Detect();
       faceMutex.lock();
-      facePosition = Detect();
+      facePosition = newFacePosition;
       faceMutex.unlock();
    }
 }
