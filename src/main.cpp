@@ -116,14 +116,6 @@ std::optional<std::pair<GLFWmonitor*, GLFWwindow*>> InitializeGlDisplay()
     return std::make_pair(monitor, window);
 }
 
-GlRenderer* CreateInitializedRenderer()
-{
-    OrbitCamera camera(Vector3(0, 0, 0));
-    auto renderer = new GlRenderer(&camera);
-    renderer->SetClearColor(0.0f, 0.0f, 0.0f);
-    return renderer;
-}
-
 int main()
 {
    auto screenshotCapturer = CreateScreenCapturer();
@@ -135,67 +127,68 @@ int main()
 
    EyeFaceAnalyzer faceAnalyzer(faceMutex, facePosition);
    const bool ok = faceAnalyzer.Initialize();
-   if (!ok)
+   if (ok)
    {
-       std::cout << "Error initializing Face analyzer. Check if you have a working camera and if the data folder is accessible." << std::endl;
-       return 1;
+       faceAnalyzer.RunThreadedDetection();
+
+       auto glDisplay = InitializeGlDisplay();
+       if (glDisplay.has_value())
+       {
+           OrbitCamera camera(Vector3(0, 0, 0));
+           auto renderer = new GlRenderer(&camera);
+           renderer->SetClearColor(0.0f, 0.0f, 0.0f);
+
+           Eye eye;
+           const ImageData rightScreen = FindRightScreenshot(screenshots, glDisplay->first);
+           eye.Initialize(renderer, rightScreen);
+
+           float deltaT = 0.f;
+
+           while (!glfwWindowShouldClose(glDisplay->second))
+           {
+               const auto startIteration = std::chrono::steady_clock::now();
+               glfwPollEvents();
+
+               std::optional<Vector3>* faceDataToUse = nullptr;
+               bool tookTheLock = false;
+               if (faceMutex.try_lock())
+               {
+                   faceDataToUse = &facePosition;
+                   tookTheLock = true;
+               }
+               else
+                   faceDataToUse = &lastFacePosition;
+
+               eye.Update(*faceDataToUse, deltaT);
+
+               if (tookTheLock)
+               {
+                   lastFacePosition = facePosition;
+                   faceMutex.unlock();
+               }
+
+               renderer->Render();
+
+               glfwSwapBuffers(glDisplay->second);
+
+               const auto endIteration = std::chrono::steady_clock::now();
+               deltaT = std::chrono::duration<float>(endIteration - startIteration).count();
+               globalT += deltaT;
+           }
+
+           delete renderer;
+       }
+       else
+           std::cout << "Error creating OpenGl display." << std::endl;
+
+       glfwTerminate();
+
+       faceAnalyzer.StopThreadedDetection();
    }
-   faceAnalyzer.RunThreadedDetection();
+   else
+       std::cout << "Error initializing Face analyzer. Check if you have a working camera and if the data folder is accessible." << std::endl;
 
-    auto glDisplay = InitializeGlDisplay();
-    if (!glDisplay.has_value())
-    {
-        std::cout << "Error creating OpenGl display." << std::endl;
-        glfwTerminate();
-        return 2;
-    }
-
-    GlRenderer* renderer = CreateInitializedRenderer();
-/*
-    Eye eye;
-    const ImageData rightScreen = FindRightScreenshot(screenshots, glDisplay->first);
-    eye.Initialize(renderer, rightScreen);
-    */
-    float deltaT = 0.f;
-
-    while (!glfwWindowShouldClose(glDisplay->second))
-    {
-        const auto startIteration = std::chrono::steady_clock::now();
-        glfwPollEvents();
-
-        std::optional<Vector3>* faceDataToUse = nullptr;
-        bool tookTheLock = false;
-        if (faceMutex.try_lock())
-        {
-            faceDataToUse = &facePosition;
-            tookTheLock = true;
-        }
-        else
-            faceDataToUse = &lastFacePosition;
-
-        //eye.Update(*faceDataToUse, deltaT);
-
-        if (tookTheLock)
-        {
-            lastFacePosition = facePosition;
-            faceMutex.unlock();
-        }
-
-        //renderer->Render();
-
-        glfwSwapBuffers(glDisplay->second);
-
-        const auto endIteration = std::chrono::steady_clock::now();
-        deltaT = std::chrono::duration<float>(endIteration - startIteration).count();
-        globalT += deltaT;
-    }
-
-    faceAnalyzer.StopThreadedDetection();
-
-   // Clean up
-   glfwTerminate();
-   delete renderer;
-   //delete screenshotCapturer;   
+   delete screenshotCapturer;
    return ok ? 0 : 1;
 }
 
