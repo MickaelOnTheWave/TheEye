@@ -8,8 +8,8 @@
 
 **The screensaver that screensaves back.** An intelligent prank screensaver that lulls viewers into thinking your computer is still awake... until an eye suddenly opens and starts watching them.
 
-![TheEye Demo](link-to-demo-gif-or-image)
-*Demo coming soon - but spoilers ruin the surprise!*
+[![TheEye Demo - Real-time Eye Tracking with AI](https://img.youtube.com/vi/Lfbn6emUn2Q/0.jpg)](https://youtu.be/Lfbn6emUn2Q)
+*Click the image above to watch the demo video - See the 3D eye following your movements in real-time!*
 
 ## 🎭 The Concept
 
