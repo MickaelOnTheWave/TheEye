@@ -5,7 +5,7 @@
 
 #include "../AbstractScreenCapturer.h"
 #include "ImageData.h"
-#include "MonitorPosition.h"
+#include "../MonitorPosition.h"
 
 class LinuxScreenCapturer : public AbstractScreenCapturer
 {
