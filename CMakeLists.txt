@@ -16,9 +16,12 @@ set(CMAKE_CXX_EXTENSIONS ON)
 set(OpenCV_STATIC ON)
 
 find_package( OpenCV REQUIRED )
-
 find_package( Eigen3 REQUIRED )
 find_package( Iconv REQUIRED )
+
+if (WIN32)
+    find_package(glm CONFIG REQUIRED)
+endif()
 
 add_subdirectory(libs)
 
@@ -53,14 +56,18 @@ set(PROJ_LINK_LIBS)
 set(PROJ_SRC)
 
 # Add all files/folders under src folder automatically to the project
-file(GLOB_RECURSE PROJ_SRC src/*.h src/*.cpp)
+file(GLOB PROJ_SRC src/*.h src/*.cpp)
+file(GLOB_RECURSE srcLinux src/linux/*.h src/linux/*.cpp)
+file(GLOB_RECURSE srcWindows src/windows/*.h src/windows/*.cpp)
 
 ###
 ### Compiler settings
 ###
-add_definitions(
-    -fPIC -fcommon
-    )
+if(UNIX)
+    add_definitions(
+        -fPIC -fcommon
+        )
+endif()
 
 ###
 ### GLFW
@@ -78,22 +85,37 @@ if(KITGL_SUPPORT_GLFW)
     list(APPEND PROJ_LINK_LIBS glfw)
 endif(KITGL_SUPPORT_GLFW)
 
-list(APPEND PROJ_LINK_LIBS Xinerama)
+if(UNIX)
+    list(APPEND PROJ_LINK_LIBS Xinerama)
+endif()
 
-###
-### Generating the project files
-###
-add_executable(${PROJECT_NAME} ${PROJ_SRC})
+add_executable(${PROJECT_NAME})
 
-###
-### Linking to the project
-###
+target_sources(${PROJECT_NAME} PRIVATE ${PROJ_SRC})
+if (WIN32)
+    message(STATUS "Adding Windows sources")
+    target_sources(${PROJECT_NAME} PRIVATE ${srcWindows})
+elseif(UNIX)
+    message(STATUS "Adding Linux sources")
+    target_sources(${PROJECT_NAME} PRIVATE ${srcLinux})
+endif()
+
+
 target_link_libraries(${PROJECT_NAME} PRIVATE
     RenderLib
     ImageProcessingToolsLib
     ${OpenCV_LIBS}
     Iconv::Iconv
     ${PROJ_LINK_LIBS})
+
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm-header-only GdiPlus)
+
+    get_target_property(GLM_INCLUDE_DIR glm::glm-header-only INTERFACE_INCLUDE_DIRECTORIES)
+    message(STATUS "GLM include dir: ${GLM_INCLUDE_DIR}")
+    target_include_directories(${PROJECT_NAME} PRIVATE ${GLM_INCLUDE_DIR})
+endif()
+
 
 file(COPY "${CMAKE_SOURCE_DIR}/data" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 

@@ -8,7 +8,13 @@
 
 #include "Eye.h"
 #include "EyeFaceAnalyzer.h"
-#include "LinuxScreenCapturer.h"
+#include "MonitorPosition.h"
+
+#ifdef __linux
+    #include "linux/LinuxScreenCapturer.h"
+#elif defined WIN32
+    #include "windows/WindowsScreenCapturer.h"
+#endif
 
 // TODO : Use a DEFINE for the data dir, and update Cmake accordingly.
 // For Linux, it should be /usr/share/the-eye.
@@ -64,38 +70,54 @@ ImageData FindRightScreenshot(const std::unordered_map<MonitorPosition, ImageDat
    return screenshots.begin()->second;
 }
 
+void errorCallback(int error, const char* description)
+{
+    fprintf(stderr, "GLFW Error (%d): %s\n", error, description);
+}
+
+AbstractScreenCapturer* CreateScreenCapturer()
+{
+#ifdef __linux
+    return new LinuxScreenCapturer();
+#elif defined WIN32
+    return new WindowsScreenCapturer();
+#endif
+}
+
+std::optional<std::pair<GLFWmonitor*, GLFWwindow*>> InitializeGlDisplay()
+{
+    GLFWmonitor* monitor = nullptr;
+    GLFWwindow* window = nullptr;
+
+    glfwSetErrorCallback(errorCallback);
+    if (!glfwInit())
+        return std::nullopt;
+
+    monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    const int monitorWidth = mode->width;
+    const int monitorHeight = mode->height;
+
+    window = glfwCreateWindow(monitorWidth, monitorHeight, "Eye Renderer", monitor, nullptr);
+    if (!window)
+        return std::nullopt;
+
+    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
+    glfwSetKeyCallback(window, keyPressCallback);
+    glfwSetMouseButtonCallback(window, mouseButtonCallback);
+    glfwSetCursorPosCallback(window, mouseMoveCallback);
+    glfwMakeContextCurrent(window);
+
+    gladLoadGL(glfwGetProcAddress);
+    glViewport(0, 0, monitorWidth, monitorHeight);
+
+    return std::make_pair(monitor, window);
+}
+
 int main()
 {
-   if (!glfwInit()) return -1;
-
-   LinuxScreenCapturer screenshotCapturer;
-   const std::unordered_map<MonitorPosition, ImageData> screenshots = screenshotCapturer.Capture();
-
-   GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-   const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-   const int monitorWidth = mode->width;
-   const int monitorHeight = mode->height;
-
-   GLFWwindow* window = glfwCreateWindow(monitorWidth, monitorHeight, "Eye Renderer", monitor, nullptr);
-   if (!window)
-   {
-      glfwTerminate();
-      return -1;
-   }
-
-   glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
-   glfwSetKeyCallback(window, keyPressCallback);
-   glfwSetMouseButtonCallback(window, mouseButtonCallback);
-   glfwSetCursorPosCallback(window, mouseMoveCallback);
-   glfwMakeContextCurrent(window);
-
-   gladLoadGL(glfwGetProcAddress);
-
-   glViewport(0, 0, monitorWidth, monitorHeight);
-
-   OrbitCamera camera(Vector3(0, 0, 0));
-   auto renderer = new GlRenderer(&camera);
-   renderer->SetClearColor(0.0f, 0.0f, 0.0f);
+   auto screenshotCapturer = CreateScreenCapturer();
+   const std::unordered_map<MonitorPosition, ImageData> screenshots = screenshotCapturer->Capture();  
 
    std::mutex faceMutex;
    std::optional<Vector3> facePosition;
@@ -105,52 +127,66 @@ int main()
    const bool ok = faceAnalyzer.Initialize();
    if (ok)
    {
-      faceAnalyzer.RunThreadedDetection();
+       faceAnalyzer.RunThreadedDetection();
 
-      Eye eye;
-      const ImageData rightScreen = FindRightScreenshot(screenshots, monitor);
-      eye.Initialize(renderer, rightScreen);
+       auto glDisplay = InitializeGlDisplay();
+       if (glDisplay.has_value())
+       {
+           OrbitCamera camera(Vector3(0, 0, 0));
+           auto renderer = new GlRenderer(&camera);
+           renderer->SetClearColor(0.0f, 0.0f, 0.0f);
 
-      float deltaT = 0.f;
+           Eye eye;
+           const ImageData rightScreen = FindRightScreenshot(screenshots, glDisplay->first);
+           eye.Initialize(renderer, rightScreen);
 
-      while (!glfwWindowShouldClose(window))
-      {
-         const auto startIteration = std::chrono::steady_clock::now();
-         glfwPollEvents();
+           float deltaT = 0.f;
 
-         std::optional<Vector3>* faceDataToUse = nullptr;
-         bool tookTheLock = false;
-         if (faceMutex.try_lock())
-         {
-            faceDataToUse = &facePosition;
-            tookTheLock = true;
-         }
-         else
-            faceDataToUse = &lastFacePosition;
+           while (!glfwWindowShouldClose(glDisplay->second))
+           {
+               const auto startIteration = std::chrono::steady_clock::now();
+               glfwPollEvents();
 
-         eye.Update(*faceDataToUse, deltaT);
+               std::optional<Vector3>* faceDataToUse = nullptr;
+               bool tookTheLock = false;
+               if (faceMutex.try_lock())
+               {
+                   faceDataToUse = &facePosition;
+                   tookTheLock = true;
+               }
+               else
+                   faceDataToUse = &lastFacePosition;
 
-         if (tookTheLock)
-            lastFacePosition = facePosition;
-         faceMutex.unlock();
+               eye.Update(*faceDataToUse, deltaT);
 
-         renderer->Render();
+               if (tookTheLock)
+               {
+                   lastFacePosition = facePosition;
+                   faceMutex.unlock();
+               }
 
-         glfwSwapBuffers(window);
+               renderer->Render();
 
-         const auto endIteration = std::chrono::steady_clock::now();
-         deltaT = std::chrono::duration<float>(endIteration - startIteration).count();
-         globalT += deltaT;
-      }
+               glfwSwapBuffers(glDisplay->second);
 
-      faceAnalyzer.StopThreadedDetection();
+               const auto endIteration = std::chrono::steady_clock::now();
+               deltaT = std::chrono::duration<float>(endIteration - startIteration).count();
+               globalT += deltaT;
+           }
+
+           delete renderer;
+       }
+       else
+           std::cout << "Error creating OpenGl display." << std::endl;
+
+       glfwTerminate();
+
+       faceAnalyzer.StopThreadedDetection();
    }
    else
-      std::cout << "Error initializing Face analyzer. Check if you have a working camera and if the data folder is accessible." << std::endl;
+       std::cout << "Error initializing Face analyzer. Check if you have a working camera and if the data folder is accessible." << std::endl;
 
-   // Clean up
-   delete renderer;
-   glfwTerminate();
+   delete screenshotCapturer;
    return ok ? 0 : 1;
 }
 

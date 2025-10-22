@@ -65,17 +65,6 @@ namespace
    }
 }
 
-MonitorPosition::MonitorPosition()
-: xOrigin(0), yOrigin(0)
-{
-}
-
-bool MonitorPosition::operator==(const MonitorPosition other) const
-{
-   return xOrigin == other.xOrigin && yOrigin == other.yOrigin;
-}
-
-
 std::unordered_map<MonitorPosition, ImageData> LinuxScreenCapturer::Capture()
 {
    std::unordered_map<MonitorPosition, ImageData> screenshots;

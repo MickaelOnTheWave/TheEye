@@ -6,6 +6,11 @@
 #include "objects/GlRenderSphereArc.h"
 #include "objects/GlRenderSpherePolar.h"
 
+#ifndef M_PI
+#define M_PI 3.141592
+#endif
+
+
 namespace
 {
    const float upperLidOpenAngle = 0.75f;
