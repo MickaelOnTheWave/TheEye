@@ -3,13 +3,19 @@
 
 #include "../AbstractScreenCapturer.h"
 
+#include <basetsd.h>
 #include <unordered_map>
 #include "../MonitorPosition.h"
 
 class WindowsScreenCapturer : public AbstractScreenCapturer
 {
 public:
-	virtual ~WindowsScreenCapturer() = default;
-	std::unordered_map<MonitorPosition, ImageData> Capture() override;	
+	WindowsScreenCapturer();
+	~WindowsScreenCapturer();
+
+	std::unordered_map<MonitorPosition, ImageData> Capture() override;
+
+private:
+	ULONG_PTR gdiplusToken;
 };
 #endif

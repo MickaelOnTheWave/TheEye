@@ -63,9 +63,11 @@ file(GLOB_RECURSE srcWindows src/windows/*.h src/windows/*.cpp)
 ###
 ### Compiler settings
 ###
-add_definitions(
-    -fPIC -fcommon
-    )
+if(UNIX)
+    add_definitions(
+        -fPIC -fcommon
+        )
+endif()
 
 ###
 ### GLFW
@@ -107,7 +109,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${PROJ_LINK_LIBS})
 
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm-header-only)
+    target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm-header-only GdiPlus)
 
     get_target_property(GLM_INCLUDE_DIR glm::glm-header-only INTERFACE_INCLUDE_DIRECTORIES)
     message(STATUS "GLM include dir: ${GLM_INCLUDE_DIR}")
