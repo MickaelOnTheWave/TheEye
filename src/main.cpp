@@ -95,12 +95,10 @@ std::optional<std::pair<GLFWmonitor*, GLFWwindow*>> InitializeGlDisplay()
 
     monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-    //const int monitorWidth = mode->width;
-    const int monitorWidth = 1980;
-    //const int monitorHeight = mode->height;
-    const int monitorHeight = 1080;
+    const int monitorWidth = mode->width;
+    const int monitorHeight = mode->height;
 
-    window = glfwCreateWindow(monitorWidth, monitorHeight, "Eye Renderer", nullptr, nullptr);
+    window = glfwCreateWindow(monitorWidth, monitorHeight, "Eye Renderer", monitor, nullptr);
     if (!window)
         return std::nullopt;
 
