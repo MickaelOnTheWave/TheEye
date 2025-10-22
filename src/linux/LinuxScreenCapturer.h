@@ -3,7 +3,7 @@
 
 #include <unordered_map>
 
-#include "AbstractScreenCapturer.h"
+#include "../AbstractScreenCapturer.h"
 #include "ImageData.h"
 #include "MonitorPosition.h"
 
