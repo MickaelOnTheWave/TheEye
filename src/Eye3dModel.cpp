@@ -124,8 +124,7 @@ Material *Eye3dModel::CreateEyeMaterial(GlRenderer *renderer) const
 
 Material *Eye3dModel::CreateSkinMaterial(GlRenderer *renderer, const ImageData& screenshot) const
 {
-   //const unsigned int textureId = renderer->AddTexture(screenshot, GL_BGRA);
-    const unsigned int textureId = renderer->AddTexture(std::string(DATA_PATH) + "/liveshot.bmp", 3);
+   const unsigned int textureId = renderer->AddTexture(screenshot, GL_BGRA);
    auto material = new Material("skin");
    material->diffuseTextureId = textureId;
    material->specularTextureId = whiteTextureId;
